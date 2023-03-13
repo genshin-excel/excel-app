@@ -52,10 +52,10 @@ function App() {
                     </div>
                   </div>
                   <div className="images-container d-flex flex-wrap align-items-center justify-content-center">
-                    <img src="https://via.placeholder.com/150x150" alt="Image 1" className="image mb-3" onClick={() => setSelectedImage(i.toString())} />
-                    <img src="https://via.placeholder.com/150x150" alt="Image 2" className="image mb-3" onClick={() => setSelectedImage(i.toString())} />
-                    <img src="https://via.placeholder.com/150x150" alt="Image 3" className="image mb-3" onClick={() => setSelectedImage(i.toString())} />
-                    <img src="https://via.placeholder.com/150x150" alt="Image 4" className="image mb-3" onClick={() => setSelectedImage(i.toString())} />
+                    <img src="https://via.placeholder.com/150x150" alt="Character 1" className="image mb-3" onClick={() => setSelectedImage(i.toString())} />
+                    <img src="https://via.placeholder.com/150x150" alt="Character 2" className="image mb-3" onClick={() => setSelectedImage(i.toString())} />
+                    <img src="https://via.placeholder.com/150x150" alt="Character 3" className="image mb-3" onClick={() => setSelectedImage(i.toString())} />
+                    <img src="https://via.placeholder.com/150x150" alt="Character 4" className="image mb-3" onClick={() => setSelectedImage(i.toString())} />
                   </div>
                   <div className="inputs-container d-flex flex-wrap align-items-center justify-content-center">
                     <div>
@@ -101,7 +101,7 @@ function App() {
                     <div className="d-flex align-items-center" style={{ display: "flex" }}>
                       <img
                         src="https://th.bing.com/th/id/OIP.Iv61AUPVuzTMYpBJaumm6wHaJT?pid=ImgDet&rs=1"
-                        alt="Image 1"
+                        alt="Character 1"
                         style={{ display: "inline-block", marginRight: "20px", cursor: "pointer", width: "150px", height: "150px" }}
                         onClick={() => {
                           setSelectedImage("https://via.placeholder.com/150x150");
@@ -110,7 +110,7 @@ function App() {
                       />
                       <img
                         src="https://via.placeholder.com/150x150"
-                        alt="Image 2"
+                        alt="Character 2"
                         style={{ display: "inline-block", marginRight: "20px", cursor: "pointer", width: "150px", height: "150px" }}
                         onClick={() => {
                           setSelectedImage("https://via.placeholder.com/150x150");
@@ -119,7 +119,7 @@ function App() {
                       />
                       <img
                         src="https://via.placeholder.com/150x150"
-                        alt="Image 3"
+                        alt="Character 3"
                         style={{ display: "inline-block", marginRight: "20px", cursor: "pointer", width: "150px", height: "150px" }}
                         onClick={() => {
                           setSelectedImage("https://via.placeholder.com/150x150");
@@ -128,7 +128,7 @@ function App() {
                       />
                       <img
                         src="https://via.placeholder.com/150x150"
-                        alt="Image 4"
+                        alt="Character 4"
                         style={{ display: "inline-block", cursor: "pointer", width: "150px", height: "150px" }}
                         onClick={() => {
                           setSelectedImage("https://via.placeholder.com/150x150");
