@@ -4,8 +4,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
     return (
-        <div className="App" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: "100%" }}>
-            <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
+        <div className="App">
+            <Navbar bg="dark" variant="dark" expand="lg">
                 <Container>
                     <Navbar.Brand href="#"><b>Home</b></Navbar.Brand>
                     <Navbar.Toggle aria-controls="navbar11" />
