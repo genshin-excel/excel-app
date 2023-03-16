@@ -58,10 +58,10 @@ function App() {
                                         </div>
                                     </div>
                                     <div className="images-container d-flex flex-wrap align-items-center justify-content-center">
-                                        <img src="https://via.placeholder.com/150x150" alt="Character 1" className="image mb-3" style={{ width: "150px", height: "150px", marginRight: "5px" }} onClick={() => setSelectedImage(i.toString())} />
-                                        <img src="https://via.placeholder.com/150x150" alt="Character 2" className="image mb-3" style={{ width: "150px", height: "150px", marginRight: "5px" }} onClick={() => setSelectedImage(i.toString())} />
-                                        <img src="https://via.placeholder.com/150x150" alt="Character 3" className="image mb-3" style={{ width: "150px", height: "150px", marginRight: "5px" }} onClick={() => setSelectedImage(i.toString())} />
-                                        <img src="https://via.placeholder.com/150x150" alt="Character 4" className="image mb-3" style={{ width: "150px", height: "150px", marginRight: "5px" }} onClick={() => setSelectedImage(i.toString())} />
+                                        <img src="https://via.placeholder.com/150x150" alt="Character 11" className="image mb-3" style={{ width: "150px", height: "150px", marginRight: "5px" }} onClick={() => setSelectedImage(i.toString())} />
+                                        <img src="https://via.placeholder.com/150x150" alt="Character 22" className="image mb-3" style={{ width: "150px", height: "150px", marginRight: "5px" }} onClick={() => setSelectedImage(i.toString())} />
+                                        <img src="https://via.placeholder.com/150x150" alt="Character 33" className="image mb-3" style={{ width: "150px", height: "150px", marginRight: "5px" }} onClick={() => setSelectedImage(i.toString())} />
+                                        <img src="https://via.placeholder.com/150x150" alt="Character 44" className="image mb-3" style={{ width: "150px", height: "150px", marginRight: "5px" }} onClick={() => setSelectedImage(i.toString())} />
                                     </div>
                                     <div className="inputs-container d-flex flex-wrap align-items-center justify-content-center">
                                         <div>
