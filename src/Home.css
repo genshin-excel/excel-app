@@ -1,0 +1,79 @@
+.customImage {
+    width: 100%;
+    height: auto;
+  }
+  .charImage {
+    width: 100%;
+    height: auto;
+  }
+  .create-team-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+  .App {
+    text-align: center;
+  }
+  .rows-container {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .btn-icon {
+  width: 50px;
+  height: 50px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-right: 10px !important;
+  border: 1px solid !important;
+  }
+  
+  .btn-span-icon {
+    display: flex;
+    margin-left: 20px;
+    justify-content: center;
+    align-items: center;
+  }
+  .search {
+    display: flex;
+  }
+  .text {
+    text-align: left;
+  }
+  .btn-caculate {
+  width: 50px;
+  height: 80px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-right: 10px !important;
+  border: 1px solid !important;
+  }
+  .btn-div-caculate {
+    display: flex;
+    margin-left: 20px;
+    justify-content: center;
+    align-items: center;
+  }
+  .btn-fa-ca {
+    font-size: 40px;
+  }
+  .boder {
+    border: 2px solid !important;
+  }
+  .div-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  .img-style {
+    width: 150px;
+    height: 150px;
+  }
+  

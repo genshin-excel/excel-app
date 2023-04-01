@@ -1,194 +1,163 @@
-import "./App.css";
-import React, { ChangeEvent, useState, useRef, useEffect } from "react";
-import { Container, Row, Col, Button, InputGroup, FormControl, Form, Modal } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useState } from 'react';
+import { Button, Box, InputLabel, Input, Grid, Dialog, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { faPen, faCalculator, faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import "./Home.css";
+import { Row } from 'react-bootstrap';
 
-function CalculatorPage() {
-    const [rows, setRows] = useState(0);
-    const addRow = () => {
-        setRows(1 + rows);
-    };
-    const [selectedImage, setSelectedImage] = useState<null | string>(null);
-    const [searchQuery, setSearchQuery] = useState("");
 
-    const handleSearchInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+const images = [
+    { src: './Images/i1.png', alt: 'Character 1' },
+    { src: './Images/i2.png', alt: 'Character 2' },
+    { src: 'https://example.com/image3.jpg', alt: 'Character 3' },
+    { src: 'https://example.com/image4.jpg', alt: 'Character 4' }
+];
+
+function App() {
+    const [rows, setRows] = useState<JSX.Element[][]>([]);
+    const [currentRow, setCurrentRow] = useState(0);
+    const [showImages, setShowImages] = useState(false);
+    const [teamCount, setTeamCount] = useState(1);
+    const [open, setOpen] = useState(false);
+    const [selectedImage, setSelectedImage] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(event.target.value);
     };
 
-    const onHide = () => {
-        setSelectedImage(null);
+    const handleClick = () => {
+        setShowImages(true);
+        setCurrentRow(currentRow => (currentRow + 4) % 4);
+        const newRow = Array(4).fill('').map((_, index) => (
+            <CustomImage key={index} src="" alt={`Character ${index}`} onClick={() => {
+                setSelectedImage(`Images ${index}`);
+                setOpen(true);
+            }} />
+        ));
+        const newTeamName = `Team ${teamCount}`;
+        setRows(prevRows => [[<h1 style={{ alignSelf: 'center' }}>{newTeamName}</h1>, <BtnIcon />, ...newRow, <InputFields />, <BtnCaculate />], ...prevRows]);
+        setTeamCount(prevTeamCount => prevTeamCount + 1);
     };
 
-    // Add a ref to the last row
-    const lastRowRef = useRef<HTMLDivElement>(null);
+    const handleClose = () => {
+        setOpen(false);
+    };
 
-    useEffect(() => {
-        // Focus on the last row when it is created
-        if (lastRowRef.current) {
-            lastRowRef.current.scrollIntoView({ behavior: "smooth" });
-        }
-    }, [rows]);
     return (
-        <Container fluid>
-            {Array.from({ length: rows }, (_, i) => (
-                <Row key={i} className="my-4" ref={i === rows - 1 ? lastRowRef : null}>
-                    <Col>
-                        <div className="d-flex align-items-center justify-content-center flex-wrap">
-                            <div>
-                                <div style={{ display: "flex", alignItems: "center" }}>
-                                    <div><h2>Team {i + 1}</h2></div>
-                                    <span className="team-icons align-self-end" style={{ marginLeft: "20px", display: "flex" }}>
-                                        <Button variant="link" style={{ width: "40px", marginRight: "10px", marginBottom: "5px", border: "1px solid" }}>
-                                            <FontAwesomeIcon icon={faPen} />
-                                        </Button>
-                                        <Button variant="link" style={{ width: "40px", marginRight: "10px", marginBottom: "5px", border: "1px solid" }}>
-                                            <FontAwesomeIcon icon={faTrashAlt} />
-                                        </Button>
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="images-container d-flex flex-wrap align-items-center justify-content-center">
-                                <img src={process.env.PUBLIC_URL + "/images/characters/add_new_4.png"} alt="Character 1" className="image mb-3" onClick={() => setSelectedImage(i.toString())} />
-                                <img src={process.env.PUBLIC_URL + "/images/characters/add_new_4.png"} alt="Character 2" className="image mb-3" onClick={() => setSelectedImage(i.toString())} />
-                                <img src={process.env.PUBLIC_URL + "/images/characters/add_new_4.png"} alt="Character 3" className="image mb-3" onClick={() => setSelectedImage(i.toString())} />
-                                <img src={process.env.PUBLIC_URL + "/images/characters/add_new_4.png"} alt="Character 4" className="image mb-3" onClick={() => setSelectedImage(i.toString())} />
-                            </div>
-                            <div className="inputs-container d-flex flex-wrap align-items-center justify-content-center">
-                                <div>
-                                    <div className="mb-3">
-                                        <InputGroup>
-                                            <InputGroup.Text>DPR:</InputGroup.Text>
-                                            <Form.Control placeholder="DPR" disabled />
-                                        </InputGroup>
-                                    </div>
-                                    <div className="mb-3">
-                                        <InputGroup>
-                                            <InputGroup.Text>DPS:</InputGroup.Text>
-                                            <Form.Control placeholder="DPS" disabled />
-                                        </InputGroup>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="calculator-container d-flex align-items-center justify-content-center">
-                                <Link to="/teamPage">
-                                    <Button variant="link" style={{ width: "40px", height: "50px", padding: "10px", marginRight: "10px", marginBottom: "40px", border: "1px solid" }}>
-                                        <FontAwesomeIcon icon={faCalculator} style={{ fontSize: "20px" }} />
-                                    </Button>
-                                </Link>
-                            </div>
+        <div className='App'>
+            <Button variant="contained" className="create-team-button" onClick={handleClick}>Create Team</Button>
+            <Row>
+                <div className="rows-container">
+                    {rows.map(row => (
+                        <div className='div-row'>
+                            {row}
                         </div>
-                    </Col>
-                    <Modal
-                        show={selectedImage !== null}
-                        onHide={() => setSelectedImage(null)}
-                        size="lg"
-                        className="d-flex align-items-center justify-content-center flex-wrap my-4"
-                        centered
-                    >
-                        <Modal.Header closeButton>
-                            <Modal.Title>Choose character</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <InputGroup className="mb-3">
-                                <FormControl
-                                    placeholder="Search..."
-                                    aria-label="Search"
-                                    aria-describedby="basic-addon2"
-                                    value={searchQuery}
-                                    onChange={handleSearchInputChange}
-                                />
-                                <Button variant="outline-secondary" id="button-addon2">
+                    ))}
+                </div>
+            </Row>
+            <Dialog open={open} onClose={handleClose}>
+                <DialogContent sx={{ width: 550 }}>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Close</Button>
+                    </DialogActions>
+                    <Grid container spacing={2} justifyContent="center" alignItems="center">
+                        <Grid item xs={12}>
+                            <div className='search'>
+                                <Input id="search-input" value={searchQuery} onChange={handleSearchChange} fullWidth />
+                                <Button id="button-addon">
                                     <FontAwesomeIcon icon={faSearch} />
                                 </Button>
-                            </InputGroup>
-                            <div
-                                style={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <div
-                                    className="d-flex align-items-center"
-                                    style={{ display: "flex", flexWrap: "wrap" }}
-                                >
-                                    <img
-                                        src="https://th.bing.com/th/id/OIP.Iv61AUPVuzTMYpBJaumm6wHaJT?pid=ImgDet&rs=1"
-                                        alt="Character 1"
-                                        style={{
-                                            display: "inline-block",
-                                            marginRight: "20px",
-                                            cursor: "pointer",
-                                            width: "150px",
-                                            height: "150px",
-                                            marginBottom: "20px",
-                                        }}
-                                        onClick={() => {
-                                            setSelectedImage("https://via.placeholder.com/150x150");
-                                            onHide();
-                                        }}
-                                    />
-                                    <img
-                                        src="https://via.placeholder.com/150x150"
-                                        alt="Character 2"
-                                        style={{
-                                            display: "inline-block",
-                                            marginRight: "20px",
-                                            cursor: "pointer",
-                                            width: "150px",
-                                            height: "150px",
-                                            marginBottom: "20px",
-                                        }}
-                                        onClick={() => {
-                                            setSelectedImage("https://via.placeholder.com/150x150");
-                                            onHide();
-                                        }}
-                                    />
-                                    <img
-                                        src="https://via.placeholder.com/150x150"
-                                        alt="Character 3"
-                                        style={{
-                                            display: "inline-block",
-                                            marginRight: "20px",
-                                            cursor: "pointer",
-                                            width: "150px",
-                                            height: "150px",
-                                            marginBottom: "20px",
-                                        }}
-                                        onClick={() => {
-                                            setSelectedImage("https://via.placeholder.com/150x150");
-                                            onHide();
-                                        }}
-                                    />
-                                    <img
-                                        src="https://via.placeholder.com/150x150"
-                                        alt="Character 4"
-                                        style={{
-                                            display: "inline-block",
-                                            cursor: "pointer",
-                                            width: "150px",
-                                            height: "150px",
-                                            marginBottom: "20px",
-                                        }}
-                                        onClick={() => {
-                                            setSelectedImage("https://via.placeholder.com/150x150");
-                                            onHide();
-                                        }}
-                                    />
-                                </div>
                             </div>
-                        </Modal.Body>
-                    </Modal>
-                </Row>
-            ))}
-            <Row className="justify-content-center mt-5">
-                <Button style={{ width: "200px" }} onClick={addRow}>Create Team</Button>
-            </Row>
-        </Container>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Grid container spacing={2}>
+                                {images.map((image, index) => (
+                                    <Grid item key={index}>
+                                        <CharImage src={image.src} alt={image.alt} onClick={() => {
+                                            setSelectedImage(image.alt);
+                                        }} />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <DialogContentText>
+                        {selectedImage}
+                    </DialogContentText>
+                </DialogContent>
+            </Dialog>
+        </div>
     );
 }
 
-export default CalculatorPage;
+interface Props {
+    src: string;
+    alt: string;
+    onClick?: () => void;
+}
+
+function CustomImage({ src = '', alt = '', onClick }: Props) {
+    return (
+        <Box onClick={onClick} sx={{ width: '150px', border: 'solid', margin: '0 10px' }}>
+            <img src={src} alt={alt} className="customImage" />
+        </Box>
+    );
+}
+
+function CharImage({ src = '', alt = '', onClick }: Props) {
+    return (
+        <Box onClick={onClick} sx={{ width: '150px', height: '150px', border: 'solid', margin: '0 10px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ maxWidth: '100%', maxHeight: '100%' }}>
+                <img src={src} alt={alt} className="customImage" style={{ maxWidth: '100%' }} />
+            </div>
+        </Box>
+
+    );
+}
+
+function InputFields() {
+    return (
+        <Box display="flex" flexDirection="column" alignItems="center">
+            <Grid container spacing={2} justifyContent="center">
+                <Grid item>
+                    <InputLabel className='text' htmlFor="dpr-input">DPR:</InputLabel>
+                    <Input id="dpr-input" placeholder="DPR" className='boder' disabled />
+                </Grid>
+            </Grid>
+            <Box mt={2}>
+                <Grid container spacing={2} justifyContent="center">
+                    <Grid item>
+                        <InputLabel className='text' htmlFor="dps-input" >DPS:</InputLabel>
+                        <Input id="dps-input" placeholder="DPS" className='boder' disabled />
+                    </Grid>
+                </Grid>
+            </Box>
+        </Box>
+    );
+}
+
+function BtnIcon() {
+    return (
+        <span className='btn-span-icon'>
+            <Button className='btn-icon'>
+                <FontAwesomeIcon icon={faPen} />
+            </Button>
+            <Button className='btn-icon'>
+                <FontAwesomeIcon icon={faTrashAlt} />
+            </Button>
+        </span>
+    )
+}
+
+function BtnCaculate() {
+    return (
+        <div className='btn-div-caculate'>
+            <Button href="/teamPage" className='btn-caculate' >
+                <FontAwesomeIcon className='btn-fa-ca' icon={faCalculator} />
+            </Button>
+        </div >
+    )
+}
+
+export default App;

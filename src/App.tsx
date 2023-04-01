@@ -19,9 +19,9 @@ function App() {
                         <Route path="/excel-app" element={<HomeBody />} />
                         <Route path="/teamPage" element={<TeamPage />} />
                     </Routes>
-                    <div style={{ marginTop: "5%" }}>
-                        <Footer />
-                    </div>
+                </div>
+                <div style={{ marginTop: "5%" }}>
+                    <Footer />
                 </div>
             </div>
         </Router>
