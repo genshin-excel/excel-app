@@ -7,10 +7,11 @@ function App() {
         <div className="App">
             <Navbar bg="dark" variant="dark" expand="lg">
                 <Container>
-                    <Navbar.Brand href="#"><b>Home</b></Navbar.Brand>
+                    <Navbar.Brand href="/excel-app"><b>Excel-App</b></Navbar.Brand>
                     <Navbar.Toggle aria-controls="navbar11" />
                     <Navbar.Collapse id="navbar11">
                         <Nav className="mr-auto">
+                            <Nav.Link href="#/rotationPage">Rotation</Nav.Link>
                             <Nav.Link href="#">Features</Nav.Link>
                             <Nav.Link href="#">About</Nav.Link>
                         </Nav>
