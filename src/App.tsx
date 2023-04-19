@@ -5,6 +5,8 @@ import Footer from './footer'
 import Navbar from './navbar'
 
 const Body = lazy(() => import('./Body'))
+const TeamPage = lazy(() => import('./teamPage'))
+const Rotation = lazy(() => import('./Rotation'))
 
 function Content() {
     return (
@@ -17,6 +19,8 @@ function Content() {
                     <HashRouter basename="/">
                         <Routes>
                             <Route index element={<Body />} />
+                            <Route path="/TeamPage/:teamIndex" element={<TeamPage />} />
+                            <Route path="/rotationPage" element={<Rotation />} />
                         </Routes>
                     </HashRouter>
                 </Suspense>
