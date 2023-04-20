@@ -3,12 +3,15 @@ import { Grid, Container } from '@mui/material';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import Footer from './footer'
 import Navbar from './navbar'
+import {Team} from './models/Team'
+import {charactersMap} from './database/characters_database'
 
 const Body = lazy(() => import('./Body'))
 const TeamPage = lazy(() => import('./teamPage'))
 const Rotation = lazy(() => import('./Rotation'))
 
 function Content() {
+    initDatabase();
     return (
         <Grid container direction="column" minHeight="100vh">
             <Grid item>
@@ -32,6 +35,27 @@ function Content() {
             </Grid>
         </Grid>
     )
+}
+
+function initDatabase(){
+    // let teams : Team[] = [
+    //     {
+    //         name: "Team 2",
+    //         characters: [charactersMap.get("jean"), charactersMap.get("bennett"), charactersMap.get("diluc")],
+    //         dps: 50000,
+    //         dpr: 1000000,
+    //     },
+    //     {
+    //         name: "Team 1",
+    //         characters: [charactersMap.get("jean"), charactersMap.get("diluc")],
+    //         dps: 40000,
+    //         dpr: 800000,
+    //     }
+    // ];
+
+    // localStorage.setItem("team_generate_id", "1");
+
+    // localStorage.setItem("teams", JSON.stringify(teams));
 }
 
 export default Content;

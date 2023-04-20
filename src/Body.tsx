@@ -3,13 +3,7 @@ import { Grid, Card, CardMedia, Box, Button, Typography, IconButton, Container, 
 import { Delete, Edit, Calculate } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
 import { Link } from 'react-router-dom';
-
-const images = [
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200'
-];
+import {Team} from './models/Team'
 
 const character = [
     'https://via.placeholder.com/200x200',
@@ -23,19 +17,24 @@ const character = [
 ];
 
 function Body() {
-    const [, setSelectedImage] = useState<string | null>(null);
+    const [teams, setTeams] = useState(JSON.parse(localStorage.getItem('teams') || '') as Team[] || []);
+
     const [showPopup, setShowPopup] = useState<boolean>(false);
-    const [isCreateTeamClicked, setIsCreateTeamClicked] = useState(false);
-    const [numTeams, setNumTeams] = useState(0);
-    const [teamsArray, setTeamsArray] = useState<number[]>([]);
 
     const handleCreateTeamClick = () => {
-        const newNumTeams = numTeams + 1;
-        const newTeamsArray = Array.from({ length: newNumTeams }, (_, i) => i);
-        setNumTeams(newNumTeams);
-        setTeamsArray(newTeamsArray);
-        setIsCreateTeamClicked(true);
-        setSelectedImage(null);
+        const idNum = parseInt(localStorage.getItem('team_generate_id') || '1');
+        localStorage.setItem('team_generate_id', (idNum + 1).toString());
+        console.log(idNum + " | " + localStorage.getItem('team_generate_id'))
+        const newTeam = {
+            name: "Team " + idNum,
+            characters: [],
+            dps: 0,
+            dpr: 0,
+        
+        }
+        let newTeams = [newTeam, ...teams]
+        setTeams(newTeams);
+        localStorage.setItem('teams', JSON.stringify(newTeams));
         setShowPopup(false);
         window.scrollTo(0, 0);
     };
@@ -62,15 +61,13 @@ function Body() {
                         </Grid>
                     </Container>
                 </Box>
-                {isCreateTeamClicked && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Container maxWidth="lg">
                             <Grid container spacing={2}>
                                 <CreateTeam />
                             </Grid>
                         </Container>
-                    </Box>
-                )}
+                </Box>
                 <Dialogs />
             </Container>
         </Container>
@@ -79,11 +76,11 @@ function Body() {
     function CreateTeam() {
         return (
             <Container maxWidth="lg">
-                {teamsArray.slice(0).reverse().map((teamIndex) => (
-                    <Grid container spacing={2} key={teamIndex}>
-                        <Grid item container xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                {teams.map(team => (
+                    <Grid container spacing={2}>
+                        <Grid item key="a" container xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                             <Typography variant="h4" component="h2">
-                                Team {teamIndex + 1}
+                                {team.name}
                             </Typography>
                             <IconButton aria-label="delete">
                                 <Delete />
@@ -92,31 +89,30 @@ function Body() {
                                 <Edit />
                             </IconButton>
                         </Grid>
-                        {images.map((image) => (
-                            <Grid item xs={6} sm={3} key={image}>
+                        {[0,1,2,3].map((index) => (
+                            <Grid item xs={6} sm={3} key={index}>
                                 <Card>
                                     <CardMedia
                                         component="img"
-                                        image={image}
-                                        alt="Placeholder image"
+                                        image={team.characters[index]?.thumbnail || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'}
+                                        alt={team.characters[index]?.name || 'null'}
                                         onClick={() => {
-                                            setSelectedImage(image);
                                             handleImageClick();
                                         }}
                                     />
                                 </Card>
                             </Grid>
                         ))}
-                        <Grid item container spacing={2}>
-                            <Grid item xs={12} sm={6}>
+                        <Grid item key="b" container spacing={2}>
+                            <Grid item xs={12} sm={6} key="g">
                                 <TextField fullWidth label="DPR" disabled />
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} sm={6} key="h">
                                 <TextField fullWidth label="DPS" disabled />
                             </Grid>
                         </Grid>
-                        <Grid item container xs={12} justifyContent="center" sx={{ mb: 2 }}>
-                            <Link to={`/TeamPage/Team-${teamIndex + 1}`}>
+                        <Grid item key="c" container xs={12} justifyContent="center" sx={{ mb: 2 }}>
+                            <Link to={`/TeamPage/${team.name}`}>
                                 <Button variant="contained" color="primary" startIcon={<Calculate />} sx={{ maxWidth: '200px' }}>
                                     Calculate
                                 </Button>
@@ -166,7 +162,6 @@ function Body() {
                                         image={image}
                                         alt="Placeholder image"
                                         onClick={() => {
-                                            setSelectedImage(image);
                                             handleImageClick();
                                         }}
                                     />
