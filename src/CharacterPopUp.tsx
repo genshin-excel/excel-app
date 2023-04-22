@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Grid, Card, CardMedia, IconButton, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { charactersMap } from './database/characters_database';
+import { charactersMap } from './database/characters_initData';
 
 type Props = {
     open: boolean;

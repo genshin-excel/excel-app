@@ -1,4 +1,4 @@
-import React, { useState, lazy } from 'react';
+import React, { useState, useRef, useEffect, lazy } from 'react';
 import { Grid, Card, CardMedia, Box, Button, Typography, IconButton, Container, TextField } from '@mui/material';
 import { Delete, Edit, Calculate } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
@@ -7,28 +7,25 @@ import { Team } from './models/Team'
 const Dialogs = lazy(() => import('./CharacterPopUp'))
 
 function Body() {
-    const [teams, setTeams] = useState(JSON.parse(localStorage.getItem('teams') || '') as Team[] || []);
+    const [teams, setTeams] = useState(localStorage.getItem('teams') ? JSON.parse(localStorage.getItem('teams')!) as Team[] : []);
 
     const [showPopup, setShowPopup] = useState<boolean>(false);
 
     const handleCreateTeamClick = () => {
         const idNum = parseInt(localStorage.getItem('team_generate_id') || '1');
-        localStorage.setItem('team_generate_id', (idNum + 1).toString());
-        const newTeamNum = teams.length + 1;
         const newTeam = {
-            name: `Team ${newTeamNum}`,
+            name: `Team ${idNum}`,
             characters: [],
             dps: 0,
             dpr: 0,
         };
         let newTeams = [newTeam, ...teams];
         setTeams(newTeams);
+        localStorage.setItem('team_generate_id', (idNum + 1).toString());
         localStorage.setItem('teams', JSON.stringify(newTeams));
         setShowPopup(false);
         window.scrollTo(0, 0);
     };
-
-
 
     const handleImageClick = () => {
         setShowPopup(true);
@@ -55,7 +52,7 @@ function Body() {
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Container maxWidth="lg">
                         <Grid container spacing={2}>
-                            <CreateTeam />
+                            <ListTeams />
                         </Grid>
                     </Container>
                 </Box>
@@ -64,12 +61,11 @@ function Body() {
         </Container>
     );
 
-    function CreateTeam() {
+    function ListTeams() {
         const handleDeleteClick = (team: Team) => {
             const newTeams = teams.filter((t) => t !== team);
             setTeams(newTeams);
             localStorage.setItem('teams', JSON.stringify(newTeams));
-            localStorage.setItem('team_generate_id', (parseInt(localStorage.getItem('team_generate_id') || '1') - 1).toString());
             setEditingTeam(null);
         };
 
@@ -106,11 +102,7 @@ function Body() {
                     <Grid container spacing={2} key={index}>
                         <Grid item container xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                             {editingTeam === team ? (
-                                <TextField
-                                    value={teamName}
-                                    onChange={(event) => setTeamName(event.target.value)}
-                                    onBlur={handleBlur}
-                                />
+                                <EditTextField value={teamName} editFunc={setTeamName} onBlur={handleBlur}/>
                             ) : (
                                 <>
                                     <Typography variant="h4" component="h2">
@@ -141,10 +133,10 @@ function Body() {
                         ))}
                         <Grid item container xs={12} spacing={2}>
                             <Grid item xs={12} sm={6}>
-                                <TextField fullWidth label="DPR" disabled />
+                                <TextField fullWidth value={team.dpr} label="DPR" disabled />
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <TextField fullWidth label="DPS" disabled />
+                                <TextField fullWidth value={team.dps} label="DPS" disabled />
                             </Grid>
                         </Grid>
                         <Grid item container xs={12} justifyContent="center" sx={{ mb: 2 }}>
@@ -157,6 +149,25 @@ function Body() {
                     </Grid>
                 ))}
             </Container>
+        );
+    }
+
+    function EditTextField({ value, editFunc, onBlur }: { value: string, editFunc: (text: string) => void, onBlur : () => void }) {
+        const editFieldRef = useRef<HTMLInputElement | null>(null);
+
+        useEffect(() => {
+            if (editFieldRef.current){
+                editFieldRef.current.focus();
+            }
+        }, []);
+        
+        return (
+            <TextField
+                    inputRef={editFieldRef}
+                    value={value}
+                    onChange={(event) => editFunc(event.target.value)}
+                    onBlur={onBlur}
+                />
         );
     }
 }
