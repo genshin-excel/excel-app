@@ -1,20 +1,10 @@
-import React, { useState } from 'react';
-import { Grid, Card, CardMedia, Box, Button, Typography, IconButton, Container, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import React, { useState, lazy } from 'react';
+import { Grid, Card, CardMedia, Box, Button, Typography, IconButton, Container, TextField } from '@mui/material';
 import { Delete, Edit, Calculate } from '@mui/icons-material';
-import SearchIcon from '@mui/icons-material/Search';
 import { Link } from 'react-router-dom';
-import {Team} from './models/Team'
+import { Team } from './models/Team'
 
-const character = [
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-];
+const Dialogs = lazy(() => import('./CharacterPopUp'))
 
 function Body() {
     const [teams, setTeams] = useState(JSON.parse(localStorage.getItem('teams') || '') as Team[] || []);
@@ -24,20 +14,21 @@ function Body() {
     const handleCreateTeamClick = () => {
         const idNum = parseInt(localStorage.getItem('team_generate_id') || '1');
         localStorage.setItem('team_generate_id', (idNum + 1).toString());
-        console.log(idNum + " | " + localStorage.getItem('team_generate_id'))
+        const newTeamNum = teams.length + 1;
         const newTeam = {
-            name: "Team " + idNum,
+            name: `Team ${newTeamNum}`,
             characters: [],
             dps: 0,
             dpr: 0,
-        
-        }
-        let newTeams = [newTeam, ...teams]
+        };
+        let newTeams = [newTeam, ...teams];
         setTeams(newTeams);
         localStorage.setItem('teams', JSON.stringify(newTeams));
         setShowPopup(false);
         window.scrollTo(0, 0);
     };
+
+
 
     const handleImageClick = () => {
         setShowPopup(true);
@@ -62,34 +53,79 @@ function Body() {
                     </Container>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Container maxWidth="lg">
-                            <Grid container spacing={2}>
-                                <CreateTeam />
-                            </Grid>
-                        </Container>
+                    <Container maxWidth="lg">
+                        <Grid container spacing={2}>
+                            <CreateTeam />
+                        </Grid>
+                    </Container>
                 </Box>
-                <Dialogs />
+                <Dialogs open={showPopup} onClose={handleClose} />
             </Container>
         </Container>
     );
 
     function CreateTeam() {
+        const handleDeleteClick = (team: Team) => {
+            const newTeams = teams.filter((t) => t !== team);
+            setTeams(newTeams);
+            localStorage.setItem('teams', JSON.stringify(newTeams));
+            localStorage.setItem('team_generate_id', (parseInt(localStorage.getItem('team_generate_id') || '1') - 1).toString());
+            setEditingTeam(null);
+        };
+
+        const [teamName, setTeamName] = useState('');
+        const [editingTeam, setEditingTeam] = useState<Team | null>(null);
+
+        const handleEditClick = (team: Team) => {
+            setEditingTeam(team);
+            setTeamName(team.name);
+        };
+
+        const handleChangeTeamName = (team: Team, newName: string) => {
+            const newTeams = teams.map((t) => {
+                if (t === team) {
+                    return { ...t, name: newName };
+                }
+                return t;
+            });
+            setTeams(newTeams);
+            localStorage.setItem('teams', JSON.stringify(newTeams));
+        };
+
+        const handleBlur = () => {
+            if (editingTeam && teamName !== '') {
+                handleChangeTeamName(editingTeam, teamName);
+                setEditingTeam(null);
+                setTeamName('');
+            }
+        };
+
         return (
             <Container maxWidth="lg">
-                {teams.map(team => (
-                    <Grid container spacing={2}>
-                        <Grid item key="a" container xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                            <Typography variant="h4" component="h2">
-                                {team.name}
-                            </Typography>
-                            <IconButton aria-label="delete">
-                                <Delete />
-                            </IconButton>
-                            <IconButton aria-label="edit">
-                                <Edit />
-                            </IconButton>
+                {teams.map((team, index) => (
+                    <Grid container spacing={2} key={index}>
+                        <Grid item container xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                            {editingTeam === team ? (
+                                <TextField
+                                    value={teamName}
+                                    onChange={(event) => setTeamName(event.target.value)}
+                                    onBlur={handleBlur}
+                                />
+                            ) : (
+                                <>
+                                    <Typography variant="h4" component="h2">
+                                        {team.name}
+                                    </Typography>
+                                    <IconButton aria-label="delete" onClick={() => handleDeleteClick(team)}>
+                                        <Delete />
+                                    </IconButton>
+                                    <IconButton aria-label="edit" onClick={() => handleEditClick(team)}>
+                                        <Edit />
+                                    </IconButton>
+                                </>
+                            )}
                         </Grid>
-                        {[0,1,2,3].map((index) => (
+                        {[0, 1, 2, 3].map((index) => (
                             <Grid item xs={6} sm={3} key={index}>
                                 <Card>
                                     <CardMedia
@@ -103,15 +139,15 @@ function Body() {
                                 </Card>
                             </Grid>
                         ))}
-                        <Grid item key="b" container spacing={2}>
-                            <Grid item xs={12} sm={6} key="g">
+                        <Grid item container xs={12} spacing={2}>
+                            <Grid item xs={12} sm={6}>
                                 <TextField fullWidth label="DPR" disabled />
                             </Grid>
-                            <Grid item xs={12} sm={6} key="h">
+                            <Grid item xs={12} sm={6}>
                                 <TextField fullWidth label="DPS" disabled />
                             </Grid>
                         </Grid>
-                        <Grid item key="c" container xs={12} justifyContent="center" sx={{ mb: 2 }}>
+                        <Grid item container xs={12} justifyContent="center" sx={{ mb: 2 }}>
                             <Link to={`/TeamPage/${team.name}`}>
                                 <Button variant="contained" color="primary" startIcon={<Calculate />} sx={{ maxWidth: '200px' }}>
                                     Calculate
@@ -121,59 +157,6 @@ function Body() {
                     </Grid>
                 ))}
             </Container>
-        );
-    }
-
-    function Dialogs() {
-        const [searchValue, setSearchValue] = useState('');
-
-        const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-            setSearchValue(event.target.value);
-        };
-
-        const handleSearch = () => {
-            console.log('Search value:', searchValue);
-        };
-
-        return (
-            <Dialog open={showPopup} onClose={handleClose}>
-                <DialogTitle>Select Character</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        fullWidth
-                        label="Search"
-                        value={searchValue}
-                        onChange={handleSearchChange}
-                        InputProps={{
-                            endAdornment: (
-                                <IconButton onClick={handleSearch}>
-                                    <SearchIcon />
-                                </IconButton>
-                            ),
-                        }}
-                        sx={{ marginBottom: '16px', marginTop: '6px' }}
-                    />
-                    <Grid container spacing={2} justifyContent="start">
-                        {character.map((image) => (
-                            <Grid item xs={6} sm={4} md={3} key={image}>
-                                <Card>
-                                    <CardMedia
-                                        component="img"
-                                        image={image}
-                                        alt="Placeholder image"
-                                        onClick={() => {
-                                            handleImageClick();
-                                        }}
-                                    />
-                                </Card>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Close</Button>
-                </DialogActions>
-            </Dialog>
         );
     }
 }

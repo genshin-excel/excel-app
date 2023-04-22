@@ -3,8 +3,8 @@ import { Grid, Container } from '@mui/material';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import Footer from './footer'
 import Navbar from './navbar'
-import {Team} from './models/Team'
-import {charactersMap} from './database/characters_database'
+// import {Team} from './models/Team'
+// import {charactersMap} from './database/characters_database'
 
 const Body = lazy(() => import('./Body'))
 const TeamPage = lazy(() => import('./teamPage'))
@@ -37,7 +37,7 @@ function Content() {
     )
 }
 
-function initDatabase(){
+function initDatabase() {
     // let teams : Team[] = [
     //     {
     //         name: "Team 2",
