@@ -94,7 +94,7 @@ function TeamPage() {
                 <Grid container spacing={2}>
                     <Grid item container xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                         <Typography variant="h4" component="h2">
-                            Team {index}
+                            {index}
                         </Typography>
                         <IconButton aria-label="delete">
                             <Delete />

@@ -27,13 +27,19 @@ function Body() {
         window.scrollTo(0, 0);
     };
 
+    const [openDialog, setOpenDialog] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(localStorage.getItem('selectedImage') || '');
+
+    localStorage.setItem('selectedImage', selectedImage);
+
     const handleImageClick = () => {
-        setShowPopup(true);
+        setOpenDialog(true);
     };
 
-    const handleClose = () => {
-        setShowPopup(false);
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
     };
+
 
     return (
         <Container maxWidth="xl" sx={{ padding: 0 }}>
@@ -56,7 +62,7 @@ function Body() {
                         </Grid>
                     </Container>
                 </Box>
-                <Dialogs open={showPopup} onClose={handleClose} />
+                <Dialogs open={openDialog} onClose={handleCloseDialog} onSelectImage={(imageUrl: string) => setSelectedImage(imageUrl)} />
             </Container>
         </Container>
     );
@@ -102,7 +108,7 @@ function Body() {
                     <Grid container spacing={2} key={index}>
                         <Grid item container xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                             {editingTeam === team ? (
-                                <EditTextField value={teamName} editFunc={setTeamName} onBlur={handleBlur}/>
+                                <EditTextField value={teamName} editFunc={setTeamName} onBlur={handleBlur} />
                             ) : (
                                 <>
                                     <Typography variant="h4" component="h2">
@@ -118,16 +124,9 @@ function Body() {
                             )}
                         </Grid>
                         {[0, 1, 2, 3].map((index) => (
-                            <Grid item xs={6} sm={3} key={index}>
+                            <Grid item xs={6} sm={3}>
                                 <Card>
-                                    <CardMedia
-                                        component="img"
-                                        image={team.characters[index]?.thumbnail || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'}
-                                        alt={team.characters[index]?.name || 'null'}
-                                        onClick={() => {
-                                            handleImageClick();
-                                        }}
-                                    />
+                                    <CardMedia component="img" image={selectedImage || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'} alt="team member" onClick={handleImageClick} />
                                 </Card>
                             </Grid>
                         ))}
@@ -152,22 +151,22 @@ function Body() {
         );
     }
 
-    function EditTextField({ value, editFunc, onBlur }: { value: string, editFunc: (text: string) => void, onBlur : () => void }) {
+    function EditTextField({ value, editFunc, onBlur }: { value: string, editFunc: (text: string) => void, onBlur: () => void }) {
         const editFieldRef = useRef<HTMLInputElement | null>(null);
 
         useEffect(() => {
-            if (editFieldRef.current){
+            if (editFieldRef.current) {
                 editFieldRef.current.focus();
             }
         }, []);
-        
+
         return (
             <TextField
-                    inputRef={editFieldRef}
-                    value={value}
-                    onChange={(event) => editFunc(event.target.value)}
-                    onBlur={onBlur}
-                />
+                inputRef={editFieldRef}
+                value={value}
+                onChange={(event) => editFunc(event.target.value)}
+                onBlur={onBlur}
+            />
         );
     }
 }

@@ -1,5 +1,5 @@
-import React, { Suspense, lazy} from 'react';
-import { Grid, Container } from '@mui/material';
+import React, { Suspense, lazy } from 'react';
+import { Grid, Container, Skeleton } from '@mui/material';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import Footer from './footer'
 import Navbar from './navbar'
@@ -15,7 +15,7 @@ function Content() {
                 <Navbar />
             </Grid>
             <Container maxWidth="xl" sx={{ px: { xs: 0.5, sm: 1, md: 2 } }}>
-                <Suspense fallback={<div>Loading...</div>}>
+                <Suspense fallback={<Skeleton variant="rectangular" height={400} />}>
                     <HashRouter basename="/">
                         <Routes>
                             <Route index element={<Body />} />
