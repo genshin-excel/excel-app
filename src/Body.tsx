@@ -2,7 +2,9 @@ import React, { useState, useRef, useEffect, lazy } from 'react';
 import { Grid, Card, CardMedia, Box, Button, Typography, IconButton, Container, TextField } from '@mui/material';
 import { Delete, Edit, Calculate } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { Team } from './models/Team'
+import { Team } from './models/Team';
+import { Character } from './models/Character';
+import { PickCharacterProps } from './CharacterPopUp';
 
 const Dialogs = lazy(() => import('./CharacterPopUp'))
 
@@ -15,7 +17,7 @@ function Body() {
         const idNum = parseInt(localStorage.getItem('team_generate_id') || '1');
         const newTeam = {
             name: `Team ${idNum}`,
-            characters: [],
+            characters: [null, null, null, null],
             dps: 0,
             dpr: 0,
         };
@@ -26,20 +28,22 @@ function Body() {
         setShowPopup(false);
         window.scrollTo(0, 0);
     };
-
-    const [openDialog, setOpenDialog] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(localStorage.getItem('selectedImage') || '');
-
-    localStorage.setItem('selectedImage', selectedImage);
-
-    const handleImageClick = () => {
-        setOpenDialog(true);
-    };
-
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-    };
-
+    const nullTeam : PickCharacterProps = {
+        team: null,
+        charIndex: -1,
+    }
+    const [openDialog, setOpenDialog] = useState(nullTeam);
+    const setSelectedImage = (character: Character, team: Team, charIndex: number) => {
+        const newTeams = teams.map((t) => {
+            if (t === team) {
+                t.characters[charIndex] = character;
+                return {...t};
+            }
+            return t;
+        });
+        setTeams(newTeams);
+        localStorage.setItem('teams', JSON.stringify(newTeams));
+    }
 
     return (
         <Container maxWidth="xl" sx={{ padding: 0 }}>
@@ -62,7 +66,6 @@ function Body() {
                         </Grid>
                     </Container>
                 </Box>
-                <Dialogs open={openDialog} onClose={handleCloseDialog} onSelectImage={(imageUrl: string) => setSelectedImage(imageUrl)} />
             </Container>
         </Container>
     );
@@ -105,8 +108,8 @@ function Body() {
         return (
             <Container maxWidth="lg">
                 {teams.map((team, index) => (
-                    <Grid container spacing={2} key={index}>
-                        <Grid item container xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                    <Grid container spacing={2} key={team.name}>
+                        <Grid item container key={team.name} xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                             {editingTeam === team ? (
                                 <EditTextField value={teamName} editFunc={setTeamName} onBlur={handleBlur} />
                             ) : (
@@ -124,21 +127,24 @@ function Body() {
                             )}
                         </Grid>
                         {[0, 1, 2, 3].map((index) => (
-                            <Grid item xs={6} sm={3}>
+                            <Grid item xs={6} sm={3} key={index}>
                                 <Card>
-                                    <CardMedia component="img" image={selectedImage || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'} alt="team member" onClick={handleImageClick} />
+                                    <CardMedia component="img" image={team.characters[index]?.thumbnail || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'} alt="team member" onClick={() => setOpenDialog({team: team, charIndex: index})} />
                                 </Card>
+                                {openDialog.team == team && openDialog.charIndex == index && (
+                                    <Dialogs onClose={()=>setOpenDialog(nullTeam)} onSelectImage={(pickedChar: Character) => setSelectedImage(pickedChar, team, index)} oldChar={team.characters[index]}/>
+                                )}
                             </Grid>
                         ))}
-                        <Grid item container xs={12} spacing={2}>
+                        <Grid item container xs={12} spacing={2} key="dpr">
                             <Grid item xs={12} sm={6}>
                                 <TextField fullWidth value={team.dpr} label="DPR" disabled />
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} sm={6} key="dps">
                                 <TextField fullWidth value={team.dps} label="DPS" disabled />
                             </Grid>
                         </Grid>
-                        <Grid item container xs={12} justifyContent="center" sx={{ mb: 2 }}>
+                        <Grid item container xs={12} justifyContent="center" sx={{ mb: 2 }} key="button">
                             <Link to={`/TeamPage/${team.name}`}>
                                 <Button variant="contained" color="primary" startIcon={<Calculate />} sx={{ maxWidth: '200px' }}>
                                     Calculate

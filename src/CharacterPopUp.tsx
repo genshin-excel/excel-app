@@ -1,65 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { Grid, Card, CardMedia, IconButton, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import React, { useState, useEffect, useDeferredValue, useMemo} from 'react';
+import { Grid, Card, CardMedia, IconButton, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Button} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { charactersMap } from './database/characters_initData';
 import { Character } from './models/Character';
-import { debounce } from 'lodash';
+import { Team } from './models/Team';
 
+export type PickCharacterProps = {
+    team: Team|null;
+    charIndex: number;
+};
 type Props = {
-    open: boolean;
     onClose: () => void;
-    onSelectImage: (imageUrl: string) => void;
+    onSelectImage: (pickedChar: Character) => void;
+    oldChar: Character|null;
 };
 
-const Dialogs: React.FC<Props> = ({ open, onClose, onSelectImage }) => {
+const Dialogs: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) => {
     const [searchValue, setSearchValue] = useState('');
     const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
-    const [filteredCharacters, setFilteredCharacters] = useState<Character[]>(Array.from(charactersMap.values()));
+    const deferredQuery = useDeferredValue(searchValue);
 
-    useEffect(() => {
-        if (searchValue === '') {
-            setFilteredCharacters(Array.from(charactersMap.values()));
-        }
-    }, [searchValue]);
-
-    const handleSearch = () => {
-        if (searchValue === '') {
-            setFilteredCharacters(Array.from(charactersMap.values()));
+    const filteredCharacters = useMemo(() => {
+        if (deferredQuery === '') {
+            return Array.from(charactersMap.values());
         } else {
             const filtered = Array.from(charactersMap.values()).filter((character) =>
-                character.name.toLowerCase().includes(searchValue.toLowerCase())
+                character.name.toLowerCase().includes(deferredQuery.valueOf().toLowerCase())
             );
-            setFilteredCharacters(filtered);
+            return filtered;
         }
-    };
-
-    const handleDebouncedSearch = debounce(() => {
-        if (searchValue === null || searchValue === '') {
-            setFilteredCharacters(Array.from(charactersMap.values()));
-        } else {
-            handleSearch();
-        }
-    }, 10);
+    }, [deferredQuery]);
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchValue(event.target.value);
-        if (event.target.value === '') {
-            setFilteredCharacters(Array.from(charactersMap.values()));
-        } else {
-            handleDebouncedSearch();
-        }
+        setSearchValue(event.target.value)
     };
 
     const handleImageClick = (character: Character) => {
-        if (character.id !== selectedCharacterId) {
-            setSelectedCharacterId(character.id);
-            onSelectImage(character.thumbnail);
+        if (character.id !== oldChar?.id) {
+            onSelectImage(character);
         }
         onClose();
     };
 
     return (
-        <Dialog open={open} onClose={onClose}>
+        <Dialog open={true} onClose={onClose} fullWidth={true}>
             <DialogTitle>Choose character</DialogTitle>
             <DialogContent>
                 <TextField
@@ -69,8 +53,8 @@ const Dialogs: React.FC<Props> = ({ open, onClose, onSelectImage }) => {
                     onChange={handleSearchChange}
                     InputProps={{
                         endAdornment: (
-                            <IconButton onClick={handleSearch}>
-                                <SearchIcon />
+                            <IconButton disabled>
+                                <SearchIcon/>
                             </IconButton>
                         ),
                     }}
@@ -82,7 +66,7 @@ const Dialogs: React.FC<Props> = ({ open, onClose, onSelectImage }) => {
                             <Card
                                 onClick={() => handleImageClick(character)}
                                 sx={{
-                                    border: selectedCharacterId === character.id ? '2px solid #1976d2' : '',
+                                    border: oldChar?.id === character.id ? '2px solid #1976d2' : '',
                                     borderRadius: '16px',
                                     cursor: 'pointer',
                                 }}
