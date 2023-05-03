@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useDeferredValue, useMemo} from 'react';
+import React, { useState, useDeferredValue, useMemo} from 'react';
 import { Grid, Card, CardMedia, IconButton, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Button} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { charactersMap } from './database/characters_initData';
@@ -17,7 +17,6 @@ type Props = {
 
 const Dialogs: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) => {
     const [searchValue, setSearchValue] = useState('');
-    const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
     const deferredQuery = useDeferredValue(searchValue);
 
     const filteredCharacters = useMemo(() => {
