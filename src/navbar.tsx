@@ -14,6 +14,7 @@ function App() {
                             <Nav.Link href="#/rotationPage">Rotation</Nav.Link>
                             <Nav.Link href="#">Features</Nav.Link>
                             <Nav.Link href="#">About</Nav.Link>
+                            <Nav.Link href="#" onClick={() => { localStorage.clear(); window.location.reload(); }}>Reset LocalStorage</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>

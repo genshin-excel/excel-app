@@ -1,51 +1,46 @@
-import React, { useState } from 'react';
-import { Grid, Card, CardMedia, Box, Button, Typography, IconButton, Container, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import React, { useState, useRef, useEffect, lazy } from 'react';
+import { Grid, Card, CardMedia, Box, Button, Typography, IconButton, Container, TextField } from '@mui/material';
 import { Delete, Edit, Calculate } from '@mui/icons-material';
-import SearchIcon from '@mui/icons-material/Search';
 import { Link } from 'react-router-dom';
-import {Team} from './models/Team'
+import { Team } from './models/Team';
+import { Character } from './models/Character';
+import { PickCharacterProps } from './CharacterPopUp';
 
-const character = [
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-    'https://via.placeholder.com/200x200',
-];
+const Dialogs = lazy(() => import('./CharacterPopUp'))
 
 function Body() {
-    const [teams, setTeams] = useState(JSON.parse(localStorage.getItem('teams') || '') as Team[] || []);
-
-    const [showPopup, setShowPopup] = useState<boolean>(false);
+    const [teams, setTeams] = useState(localStorage.getItem('teams') ? JSON.parse(localStorage.getItem('teams')!) as Team[] : []);
 
     const handleCreateTeamClick = () => {
         const idNum = parseInt(localStorage.getItem('team_generate_id') || '1');
-        localStorage.setItem('team_generate_id', (idNum + 1).toString());
-        console.log(idNum + " | " + localStorage.getItem('team_generate_id'))
         const newTeam = {
-            name: "Team " + idNum,
-            characters: [],
+            name: `Team ${idNum}`,
+            characters: [null, null, null, null],
             dps: 0,
             dpr: 0,
-        
-        }
-        let newTeams = [newTeam, ...teams]
+        };
+        let newTeams = [newTeam, ...teams];
         setTeams(newTeams);
+        localStorage.setItem('team_generate_id', (idNum + 1).toString());
         localStorage.setItem('teams', JSON.stringify(newTeams));
-        setShowPopup(false);
         window.scrollTo(0, 0);
     };
-
-    const handleImageClick = () => {
-        setShowPopup(true);
-    };
-
-    const handleClose = () => {
-        setShowPopup(false);
-    };
+    const nullTeam : PickCharacterProps = {
+        team: null,
+        charIndex: -1,
+    }
+    const [openDialog, setOpenDialog] = useState(nullTeam);
+    const setSelectedImage = (character: Character, team: Team, charIndex: number) => {
+        const newTeams = teams.map((t) => {
+            if (t === team) {
+                t.characters[charIndex] = character;
+                return {...t};
+            }
+            return t;
+        });
+        setTeams(newTeams);
+        localStorage.setItem('teams', JSON.stringify(newTeams));
+    }
 
     return (
         <Container maxWidth="xl" sx={{ padding: 0 }}>
@@ -62,56 +57,91 @@ function Body() {
                     </Container>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Container maxWidth="lg">
-                            <Grid container spacing={2}>
-                                <CreateTeam />
-                            </Grid>
-                        </Container>
+                    <Container maxWidth="lg">
+                        <Grid container spacing={2}>
+                            <ListTeams />
+                        </Grid>
+                    </Container>
                 </Box>
-                <Dialogs />
             </Container>
         </Container>
     );
 
-    function CreateTeam() {
+    function ListTeams() {
+        const handleDeleteClick = (team: Team) => {
+            const newTeams = teams.filter((t) => t !== team);
+            setTeams(newTeams);
+            localStorage.setItem('teams', JSON.stringify(newTeams));
+            setEditingTeam(null);
+        };
+
+        const [teamName, setTeamName] = useState('');
+        const [editingTeam, setEditingTeam] = useState<Team | null>(null);
+
+        const handleEditClick = (team: Team) => {
+            setEditingTeam(team);
+            setTeamName(team.name);
+        };
+
+        const handleChangeTeamName = (team: Team, newName: string) => {
+            const newTeams = teams.map((t) => {
+                if (t === team) {
+                    return { ...t, name: newName };
+                }
+                return t;
+            });
+            setTeams(newTeams);
+            localStorage.setItem('teams', JSON.stringify(newTeams));
+        };
+
+        const handleBlur = () => {
+            if (editingTeam && teamName !== '') {
+                handleChangeTeamName(editingTeam, teamName);
+                setEditingTeam(null);
+                setTeamName('');
+            }
+        };
+
         return (
             <Container maxWidth="lg">
-                {teams.map(team => (
-                    <Grid container spacing={2}>
-                        <Grid item key="a" container xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                            <Typography variant="h4" component="h2">
-                                {team.name}
-                            </Typography>
-                            <IconButton aria-label="delete">
-                                <Delete />
-                            </IconButton>
-                            <IconButton aria-label="edit">
-                                <Edit />
-                            </IconButton>
+                {teams.map((team, index) => (
+                    <Grid container spacing={2} key={team.name}>
+                        <Grid item container key={team.name} xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                            {editingTeam === team ? (
+                                <EditTextField value={teamName} editFunc={setTeamName} onBlur={handleBlur} />
+                            ) : (
+                                <>
+                                    <Typography variant="h4" component="h2">
+                                        {team.name}
+                                    </Typography>
+                                    <IconButton aria-label="delete" onClick={() => handleDeleteClick(team)}>
+                                        <Delete />
+                                    </IconButton>
+                                    <IconButton aria-label="edit" onClick={() => handleEditClick(team)}>
+                                        <Edit />
+                                    </IconButton>
+                                </>
+                            )}
                         </Grid>
-                        {[0,1,2,3].map((index) => (
+                        {[0, 1, 2, 3].map((index) => (
                             <Grid item xs={6} sm={3} key={index}>
                                 <Card>
-                                    <CardMedia
-                                        component="img"
-                                        image={team.characters[index]?.thumbnail || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'}
-                                        alt={team.characters[index]?.name || 'null'}
-                                        onClick={() => {
-                                            handleImageClick();
-                                        }}
-                                    />
+                                    <CardMedia component="img" image={team.characters[index]?.thumbnail || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'} alt="team member" onClick={() => setOpenDialog({team: team, charIndex: index})} />
                                 </Card>
+                                {openDialog.team === team && openDialog.charIndex === index && (
+                                    <Dialogs onClose={()=>setOpenDialog(nullTeam)} onSelectImage={(pickedChar: Character) => setSelectedImage(pickedChar, team, index)} oldChar={team.characters[index]}/>
+                                )}
                             </Grid>
                         ))}
-                        <Grid item key="b" container spacing={2}>
-                            <Grid item xs={12} sm={6} key="g">
-                                <TextField fullWidth label="DPR" disabled />
+                        <Grid item container xs={12} spacing={2} key="dpr">
+                            <Grid item xs={12} sm={6}>
+                                <TextField fullWidth value={team.dpr} label="DPR" disabled />
                             </Grid>
-                            <Grid item xs={12} sm={6} key="h">
-                                <TextField fullWidth label="DPS" disabled />
+                            <Grid item xs={12} sm={6} key="dps">
+                                <TextField fullWidth value={team.dps} label="DPS" disabled />
                             </Grid>
                         </Grid>
-                        <Grid item key="c" container xs={12} justifyContent="center" sx={{ mb: 2 }}>
+                        <Grid item container xs={12} justifyContent="center" sx={{ mb: 2 }} key="button">
                             <Link to={`/TeamPage/${team.name}`}>
                                 <Button variant="contained" color="primary" startIcon={<Calculate />} sx={{ maxWidth: '200px' }}>
                                     Calculate
@@ -124,56 +154,22 @@ function Body() {
         );
     }
 
-    function Dialogs() {
-        const [searchValue, setSearchValue] = useState('');
+    function EditTextField({ value, editFunc, onBlur }: { value: string, editFunc: (text: string) => void, onBlur: () => void }) {
+        const editFieldRef = useRef<HTMLInputElement | null>(null);
 
-        const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-            setSearchValue(event.target.value);
-        };
-
-        const handleSearch = () => {
-            console.log('Search value:', searchValue);
-        };
+        useEffect(() => {
+            if (editFieldRef.current) {
+                editFieldRef.current.focus();
+            }
+        }, []);
 
         return (
-            <Dialog open={showPopup} onClose={handleClose}>
-                <DialogTitle>Select Character</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        fullWidth
-                        label="Search"
-                        value={searchValue}
-                        onChange={handleSearchChange}
-                        InputProps={{
-                            endAdornment: (
-                                <IconButton onClick={handleSearch}>
-                                    <SearchIcon />
-                                </IconButton>
-                            ),
-                        }}
-                        sx={{ marginBottom: '16px', marginTop: '6px' }}
-                    />
-                    <Grid container spacing={2} justifyContent="start">
-                        {character.map((image) => (
-                            <Grid item xs={6} sm={4} md={3} key={image}>
-                                <Card>
-                                    <CardMedia
-                                        component="img"
-                                        image={image}
-                                        alt="Placeholder image"
-                                        onClick={() => {
-                                            handleImageClick();
-                                        }}
-                                    />
-                                </Card>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Close</Button>
-                </DialogActions>
-            </Dialog>
+            <TextField
+                inputRef={editFieldRef}
+                value={value}
+                onChange={(event) => editFunc(event.target.value)}
+                onBlur={onBlur}
+            />
         );
     }
 }

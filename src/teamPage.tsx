@@ -30,9 +30,10 @@ const character = [
 
 function TeamPage() {
     const { teamIndex } = useParams();
-    const index = teamIndex ? teamIndex.replace('Team', '').replace('-', ' ') : '';
     const [, setSelectedImage] = useState<string | null>(null);
     const [showPopup, setShowPopup] = useState<boolean>(false);
+    // const localData = localStorage.getItem('teams');
+    // const teamData = JSON.parse(localData);
 
     const handleImageClick = () => {
         setShowPopup(true);
@@ -54,7 +55,7 @@ function TeamPage() {
 
     return (
         <Container maxWidth="xl" sx={{ padding: 0 }}>
-            <Container maxWidth="lg">
+            <Container maxWidth="xl">
                 <Box sx={{ display: 'flex', justifyContent: 'center', margin: '26px 0' }}>
                     <Grid container>
                         <TeamComp />
@@ -90,11 +91,11 @@ function TeamPage() {
 
 
         return (
-            <Container maxWidth="lg">
-                <Grid container spacing={2}>
+            <Container maxWidth="xl">
+                <Grid container item spacing={2} xs={6}>
                     <Grid item container xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                         <Typography variant="h4" component="h2">
-                            Team {index}
+                            {teamIndex}
                         </Typography>
                         <IconButton aria-label="delete">
                             <Delete />
@@ -103,8 +104,8 @@ function TeamPage() {
                             <Edit />
                         </IconButton>
                     </Grid>
-                    {images.map((image) => (
-                        <Grid item xs={6} sm={3} key={image}>
+                    {images.map((image, i) => (
+                        <Grid item xs={6} sm={3} key={i}>
                             <Card sx={{ position: 'relative' }}>
                                 <CardMedia
                                     component="img"
@@ -161,6 +162,9 @@ function TeamPage() {
                         </Box>
                     </Grid>
                 </Grid>
+                <Grid container item spacing={2} xs={6}>
+
+                </Grid>
             </Container>
         );
     }
@@ -195,8 +199,8 @@ function TeamPage() {
                         sx={{ marginBottom: '16px', marginTop: '6px' }}
                     />
                     <Grid container spacing={2} justifyContent="start">
-                        {character.map((image) => (
-                            <Grid item xs={6} sm={4} md={3} key={image}>
+                        {character.map((image, i) => (
+                            <Grid item xs={6} sm={4} md={3} key={i}>
                                 <Card>
                                     <CardMedia
                                         component="img"
