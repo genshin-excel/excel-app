@@ -11,8 +11,6 @@ const Dialogs = lazy(() => import('./CharacterPopUp'))
 function Body() {
     const [teams, setTeams] = useState(localStorage.getItem('teams') ? JSON.parse(localStorage.getItem('teams')!) as Team[] : []);
 
-    const [showPopup, setShowPopup] = useState<boolean>(false);
-
     const handleCreateTeamClick = () => {
         const idNum = parseInt(localStorage.getItem('team_generate_id') || '1');
         const newTeam = {
@@ -25,7 +23,6 @@ function Body() {
         setTeams(newTeams);
         localStorage.setItem('team_generate_id', (idNum + 1).toString());
         localStorage.setItem('teams', JSON.stringify(newTeams));
-        setShowPopup(false);
         window.scrollTo(0, 0);
     };
     const nullTeam : PickCharacterProps = {
@@ -131,7 +128,7 @@ function Body() {
                                 <Card>
                                     <CardMedia component="img" image={team.characters[index]?.thumbnail || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'} alt="team member" onClick={() => setOpenDialog({team: team, charIndex: index})} />
                                 </Card>
-                                {openDialog.team == team && openDialog.charIndex == index && (
+                                {openDialog.team === team && openDialog.charIndex === index && (
                                     <Dialogs onClose={()=>setOpenDialog(nullTeam)} onSelectImage={(pickedChar: Character) => setSelectedImage(pickedChar, team, index)} oldChar={team.characters[index]}/>
                                 )}
                             </Grid>
