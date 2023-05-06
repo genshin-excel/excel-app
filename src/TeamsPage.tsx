@@ -1,35 +1,19 @@
 import React from 'react';
-import { makeStyles } from '@mui/styles';
-import { Grid } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 
-const useStyles = makeStyles({
-    root: {
-        flexGrow: 1,
-    },
-    image: {
-        maxWidth: '100%',
-        height: 'auto',
-    },
-});
+const GetUrlPage = () => {
+    const location = useLocation();
+    const teamName = decodeURIComponent(
+        location.pathname.split('/').filter((p) => p !== '').pop()?.replace(/\+/g, ' ') || ''
+    );
 
-const AddNewImages = () => {
-    const classes = useStyles();
 
     return (
-        <div className={classes.root}>
-            <Grid container spacing={2} justifyContent="center">
-                {[...Array(4)].map((_, index) => (
-                    <Grid item key={index}>
-                        <img
-                            src="/images/characters/add_new_4.png"
-                            alt={`Add New ${index + 1}`}
-                            className={classes.image}
-                        />
-                    </Grid>
-                ))}
-            </Grid>
+        <div>
+            <h1>Get URL Page</h1>
+            <p>Name team is: {teamName}</p>
         </div>
     );
 };
 
-export default AddNewImages;
+export default GetUrlPage;

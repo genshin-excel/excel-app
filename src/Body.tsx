@@ -25,7 +25,7 @@ function Body() {
         localStorage.setItem('teams', JSON.stringify(newTeams));
         window.scrollTo(0, 0);
     };
-    const nullTeam : PickCharacterProps = {
+    const nullTeam: PickCharacterProps = {
         team: null,
         charIndex: -1,
     }
@@ -34,7 +34,7 @@ function Body() {
         const newTeams = teams.map((t) => {
             if (t === team) {
                 t.characters[charIndex] = character;
-                return {...t};
+                return { ...t };
             }
             return t;
         });
@@ -126,10 +126,10 @@ function Body() {
                         {[0, 1, 2, 3].map((index) => (
                             <Grid item xs={6} sm={3} key={index}>
                                 <Card>
-                                    <CardMedia component="img" image={team.characters[index]?.thumbnail || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'} alt="team member" onClick={() => setOpenDialog({team: team, charIndex: index})} />
+                                    <CardMedia component="img" image={team.characters[index]?.thumbnail || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'} alt="team member" onClick={() => setOpenDialog({ team: team, charIndex: index })} />
                                 </Card>
                                 {openDialog.team === team && openDialog.charIndex === index && (
-                                    <Dialogs onClose={()=>setOpenDialog(nullTeam)} onSelectImage={(pickedChar: Character) => setSelectedImage(pickedChar, team, index)} oldChar={team.characters[index]}/>
+                                    <Dialogs onClose={() => setOpenDialog(nullTeam)} onSelectImage={(pickedChar: Character) => setSelectedImage(pickedChar, team, index)} oldChar={team.characters[index]} />
                                 )}
                             </Grid>
                         ))}
