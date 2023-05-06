@@ -22,7 +22,7 @@ export class TeamDAO extends BaseDAO {
 
     public addTeam(team: Team): Team {
         var teams = this.getAllTeams();
-        var newTeams = [...teams, team];
+        var newTeams = [team, ...teams];
         this.storage.set(this.teams_key, newTeams);
         return team;
     }
