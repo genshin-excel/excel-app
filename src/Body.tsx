@@ -1,15 +1,18 @@
-import React, { useState, useRef, useEffect, lazy } from 'react';
+import React, { useState, useRef, useEffect, lazy, useContext } from 'react';
 import { Grid, Card, CardMedia, Box, Button, Typography, IconButton, Container, TextField } from '@mui/material';
 import { Delete, Edit, Calculate } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { Team } from './models/Team';
 import { Character } from './models/Character';
 import { PickCharacterProps } from './CharacterPopUp';
+import EditTextField from './EditTextField';
+import { DBContext } from './database/Database';
 
 const Dialogs = lazy(() => import('./CharacterPopUp'))
 
 function Body() {
-    const [teams, setTeams] = useState(localStorage.getItem('teams') ? JSON.parse(localStorage.getItem('teams')!) as Team[] : []);
+    const database = useContext(DBContext)
+    const [teams, setTeams] = useState(database.getTeamDAO().getAllTeams());
 
     const handleCreateTeamClick = () => {
         const idNum = parseInt(localStorage.getItem('team_generate_id') || '1');
@@ -19,10 +22,9 @@ function Body() {
             dps: 0,
             dpr: 0,
         };
-        let newTeams = [newTeam, ...teams];
-        setTeams(newTeams);
+        database.getTeamDAO().addTeam(newTeam);
+        setTeams(database.getTeamDAO().getAllTeams());
         localStorage.setItem('team_generate_id', (idNum + 1).toString());
-        localStorage.setItem('teams', JSON.stringify(newTeams));
         window.scrollTo(0, 0);
     };
     const nullTeam: PickCharacterProps = {
@@ -151,25 +153,6 @@ function Body() {
                     </Grid>
                 ))}
             </Container>
-        );
-    }
-
-    function EditTextField({ value, editFunc, onBlur }: { value: string, editFunc: (text: string) => void, onBlur: () => void }) {
-        const editFieldRef = useRef<HTMLInputElement | null>(null);
-
-        useEffect(() => {
-            if (editFieldRef.current) {
-                editFieldRef.current.focus();
-            }
-        }, []);
-
-        return (
-            <TextField
-                inputRef={editFieldRef}
-                value={value}
-                onChange={(event) => editFunc(event.target.value)}
-                onBlur={onBlur}
-            />
         );
     }
 }

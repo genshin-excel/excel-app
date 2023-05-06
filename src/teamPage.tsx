@@ -6,10 +6,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import { Add } from '@mui/icons-material';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Team } from './models/Team';
 import { Character } from './models/Character';
 import { PickCharacterProps } from './CharacterPopUp';
+import EditTextField from './EditTextField';
 
 
 const Dialogs = lazy(() => import('./CharacterPopUp'))
@@ -76,7 +77,6 @@ function TeamPage() {
 
         const [teamName, setTeamName] = useState('');
         const [editingTeam, setEditingTeam] = useState<Team | null>(null);
-
         const handleEditClick = (team: Team) => {
             setEditingTeam(team);
             setTeamName(team.name);
@@ -86,6 +86,7 @@ function TeamPage() {
         const currentTeamName = decodeURIComponent(location.pathname.split('/').filter((p) => p !== '').pop()?.replace(/\+/g, ' ') || '');
         const teamDisplay = teams.filter(team => team.name === currentTeamName);
 
+        const navigate = useNavigate();
         const handleChangeTeamName = (team: Team, newName: string) => {
             const newTeams = teams.map((t) => {
                 if (t === team) {
@@ -96,6 +97,7 @@ function TeamPage() {
             setTeams(newTeams);
             setTeamName(newName);
             localStorage.setItem('teams', JSON.stringify(newTeams));
+            navigate(`/TeamPage/${newName}`);
         };
 
         const handleBlur = () => {
@@ -180,25 +182,6 @@ function TeamPage() {
 
                 </Grid>
             </Container>
-        );
-    }
-
-    function EditTextField({ value, editFunc, onBlur }: { value: string, editFunc: (text: string) => void, onBlur: () => void }) {
-        const editFieldRef = useRef<HTMLInputElement | null>(null);
-
-        useEffect(() => {
-            if (editFieldRef.current) {
-                editFieldRef.current.focus();
-            }
-        }, []);
-
-        return (
-            <TextField
-                inputRef={editFieldRef}
-                value={value}
-                onChange={(event) => editFunc(event.target.value)}
-                onBlur={onBlur}
-            />
         );
     }
 }
