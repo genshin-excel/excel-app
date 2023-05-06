@@ -1,15 +1,18 @@
-import React, { useState, useRef, useEffect, lazy } from 'react';
+import React, { useState, useRef, useEffect, lazy, useContext } from 'react';
 import { Grid, Card, CardMedia, Box, Button, Typography, IconButton, Container, TextField } from '@mui/material';
 import { Delete, Edit, Calculate } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { Team } from './models/Team';
 import { Character } from './models/Character';
 import { PickCharacterProps } from './CharacterPopUp';
+import EditTextField from './EditTextField';
+import { DBContext } from './database/Database';
 
 const Dialogs = lazy(() => import('./CharacterPopUp'))
 
 function Body() {
-    const [teams, setTeams] = useState(localStorage.getItem('teams') ? JSON.parse(localStorage.getItem('teams')!) as Team[] : []);
+    const database = useContext(DBContext)
+    const [teams, setTeams] = useState(database.getTeamDAO().getAllTeams());
 
     const handleCreateTeamClick = () => {
         const idNum = parseInt(localStorage.getItem('team_generate_id') || '1');
@@ -19,13 +22,12 @@ function Body() {
             dps: 0,
             dpr: 0,
         };
-        let newTeams = [newTeam, ...teams];
-        setTeams(newTeams);
+        database.getTeamDAO().addTeam(newTeam);
+        setTeams(database.getTeamDAO().getAllTeams());
         localStorage.setItem('team_generate_id', (idNum + 1).toString());
-        localStorage.setItem('teams', JSON.stringify(newTeams));
         window.scrollTo(0, 0);
     };
-    const nullTeam : PickCharacterProps = {
+    const nullTeam: PickCharacterProps = {
         team: null,
         charIndex: -1,
     }
@@ -34,7 +36,7 @@ function Body() {
         const newTeams = teams.map((t) => {
             if (t === team) {
                 t.characters[charIndex] = character;
-                return {...t};
+                return { ...t };
             }
             return t;
         });
@@ -126,10 +128,10 @@ function Body() {
                         {[0, 1, 2, 3].map((index) => (
                             <Grid item xs={6} sm={3} key={index}>
                                 <Card>
-                                    <CardMedia component="img" image={team.characters[index]?.thumbnail || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'} alt="team member" onClick={() => setOpenDialog({team: team, charIndex: index})} />
+                                    <CardMedia component="img" image={team.characters[index]?.thumbnail || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'} alt="team member" onClick={() => setOpenDialog({ team: team, charIndex: index })} />
                                 </Card>
                                 {openDialog.team === team && openDialog.charIndex === index && (
-                                    <Dialogs onClose={()=>setOpenDialog(nullTeam)} onSelectImage={(pickedChar: Character) => setSelectedImage(pickedChar, team, index)} oldChar={team.characters[index]}/>
+                                    <Dialogs onClose={() => setOpenDialog(nullTeam)} onSelectImage={(pickedChar: Character) => setSelectedImage(pickedChar, team, index)} oldChar={team.characters[index]} />
                                 )}
                             </Grid>
                         ))}
@@ -151,25 +153,6 @@ function Body() {
                     </Grid>
                 ))}
             </Container>
-        );
-    }
-
-    function EditTextField({ value, editFunc, onBlur }: { value: string, editFunc: (text: string) => void, onBlur: () => void }) {
-        const editFieldRef = useRef<HTMLInputElement | null>(null);
-
-        useEffect(() => {
-            if (editFieldRef.current) {
-                editFieldRef.current.focus();
-            }
-        }, []);
-
-        return (
-            <TextField
-                inputRef={editFieldRef}
-                value={value}
-                onChange={(event) => editFunc(event.target.value)}
-                onBlur={onBlur}
-            />
         );
     }
 }
