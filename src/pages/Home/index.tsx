@@ -2,22 +2,18 @@ import React, { useState, useContext } from 'react';
 import { Grid, Box, Button, Container, TextField } from '@mui/material';
 import { Calculate } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { Team } from './models/Team';
-import { Character } from './models/Character';
-import { PickCharacterProps } from './CharacterPopUp';
-import { DBContext } from './database/Database';
-import TeamDisplay from './components/TeamDisplay';
-import { GenerateIdDAO } from './database/dao/GenerateIdDAO';
-import TeamName from './components/TeamName';
+import { Team } from '../../models/Team';
+import { Character } from '../../models/Character';
+import { PickCharacterProps } from '../../components/CharacterPopUp';
+import { DBContext } from '../../database/Database';
+import TeamDisplay from '../../components/TeamDisplay';
+import TeamName from '../../components/TeamName';
 
 function Body() {
     const database = useContext(DBContext);
     const [teams, setTeams] = useState(database.getTeamDAO().getAllTeams());
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [generateIdDAO, setGenerateIdDAO] = useState(new GenerateIdDAO(0, database.storage));
     const handleCreateTeamClick = () => {
-        const newTeamId = generateIdDAO.getTeamGenerateId() + 1;
-        generateIdDAO.setTeamGenerateId(newTeamId);
+        const newTeamId = database.getConfigDAO().getNextId();
         const newTeam = {
             id: newTeamId,
             name: `Team ${newTeamId}`,
@@ -25,8 +21,8 @@ function Body() {
             dps: 0,
             dpr: 0,
         };
-        database.getTeamDAO().addTeam(newTeam);
-        setTeams(database.getTeamDAO().getAllTeams());
+        const newTeams = database.getTeamDAO().addTeam(newTeam);
+        setTeams(newTeams);
         window.scrollTo(0, 0);
     };
     const nullTeam: PickCharacterProps = {
@@ -35,15 +31,9 @@ function Body() {
     }
     const [openDialog, setOpenDialog] = useState(nullTeam);
     const setSelectedImage = (character: Character, team: Team, charIndex: number) => {
-        const newTeams = teams.map((t) => {
-            if (t === team) {
-                t.characters[charIndex] = character;
-                return { ...t };
-            }
-            return t;
-        });
+        team.characters[charIndex] = character;
+        var newTeams = database.getTeamDAO().updateTeamByName(team.name, team);
         setTeams(newTeams);
-        localStorage.setItem('teams', JSON.stringify(newTeams));
     }
 
     return (
@@ -82,9 +72,8 @@ function Body() {
     function DisplayTeam(props: { team: Team }) {
         const { team } = props;
         const handleDeleteClick = (team: Team) => {
-            const newTeams = teams.filter((t) => t !== team);
+            const newTeams = database.getTeamDAO().deleteTeamByName(team.name);
             setTeams(newTeams);
-            localStorage.setItem('teams', JSON.stringify(newTeams));
             setEditingTeam(null);
         };
         const [teamName, setTeamName] = useState('');
@@ -94,14 +83,8 @@ function Body() {
             setTeamName(team.name);
         };
         const handleChangeTeamName = (team: Team, newName: string) => {
-            const newTeams = teams.map((t) => {
-                if (t === team) {
-                    return { ...t, name: newName };
-                }
-                return t;
-            });
+            const newTeams = database.getTeamDAO().updateTeamByName(team.name, { ...team, name: newName });
             setTeams(newTeams);
-            localStorage.setItem('teams', JSON.stringify(newTeams));
         };
         const handleBlur = () => {
             if (editingTeam && teamName !== '') {

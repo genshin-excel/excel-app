@@ -6,8 +6,8 @@ import Navbar from './navbar'
 import { DBContext, DatabaseContext } from './database/Database';
 import { DBLocalStorage } from './database/localStorage/LocalStorageImpl';
 
-const Body = lazy(() => import('./Body'))
-const TeamPage = lazy(() => import('./teamPage'))
+const Body = lazy(() => import('./pages/Home'))
+const TeamPage = lazy(() => import('./pages/TeamDetails'))
 const Rotation = lazy(() => import('./Rotation'))
 
 function Content() {
@@ -19,7 +19,8 @@ function Content() {
                     <Navbar />
                 </Grid>
                 <Container maxWidth="xl" sx={{ px: { xs: 0.5, sm: 1, md: 2 } }}>
-                    <Suspense fallback={<Skeleton variant="rectangular" height={400} />}>
+                    {/* <Suspense fallback={null}> */}
+                    <Suspense fallback={<Skeleton variant="rectangular" height={1000} />}>
                         <HashRouter basename="/">
                             <Routes>
                                 <Route index element={<Body />} />

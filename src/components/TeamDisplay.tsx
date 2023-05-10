@@ -1,10 +1,10 @@
-import React, { lazy } from 'react';
+import React, {lazy, Suspense } from 'react';
 import { Team } from '../models/Team';
 import { Character } from '../models/Character';
-import { PickCharacterProps } from '../CharacterPopUp';
+import { PickCharacterProps } from './CharacterPopUp';
 import { Grid, Card, CardMedia } from '@mui/material';
 
-const Dialogs = lazy(() => import('../CharacterPopUp'))
+const Dialogs = lazy(() => import('./CharacterPopUp'))
 
 
 interface TeamDisplayProps {
@@ -30,6 +30,7 @@ function TeamDisplay({
         team: null,
         charIndex: -1,
     }
+
     return (
         <Grid container spacing={2} sx={{ alignItems: 'center', justifyContent: 'flex-start' }}>
             {[0, 1, 2, 3].map((index) => (
@@ -38,7 +39,9 @@ function TeamDisplay({
                         <CardMedia component="img" image={team.characters[index]?.thumbnail || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'} alt="team member" onClick={() => setOpenDialog({ team: team, charIndex: index })} />
                     </Card>
                     {openDialog.team === team && openDialog.charIndex === index && (
-                        <Dialogs onClose={() => setOpenDialog(nullTeam)} onSelectImage={(pickedChar: Character) => setSelectedImage(pickedChar, team, index)} oldChar={team.characters[index]} />
+                        <Suspense fallback={null}>
+                            <Dialogs onClose={() => setOpenDialog(nullTeam)} onSelectImage={(pickedChar: Character) => setSelectedImage(pickedChar, team, index)} oldChar={team.characters[index]} />
+                        </Suspense>
                     )}
                 </Grid>
             ))}

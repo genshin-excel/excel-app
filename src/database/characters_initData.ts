@@ -1,5 +1,5 @@
 import { Character } from '../models/Character';
-import charactersData from './characters.json';
+import charactersData from '../data/characters.json';
 
 export const charactersMap = new Map<string, Character>();
 

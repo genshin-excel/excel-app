@@ -17,30 +17,44 @@ export class TeamDAO extends BaseDAO {
     }
 
     public getAllTeams(): Team[] {
-        return this.storage.get(this.teams_key) || [];
+        var teams = this.storage.get(this.teams_key);
+        if (teams === undefined) {
+            teams = [];
+            this.storage.set(this.teams_key, teams);
+            return teams;
+        }
+        return teams;
     }
 
-    public addTeam(team: Team): Team {
+    public addTeam(team: Team): Team[] {
         var teams = this.getAllTeams();
+        var indexExists = teams.findIndex((t: Team) => t.name === team.name);
+        if (indexExists !== -1) {
+            teams.splice(indexExists, 1);
+        }
         var newTeams = [team, ...teams];
         this.storage.set(this.teams_key, newTeams);
-        return team;
+        return newTeams;
     }
 
-    public updateTeam(team: Team): Team {
+    public updateTeamByName(name: string, team: Team): Team[] {
         var teams = this.getAllTeams();
-        var index = teams.findIndex((t: Team) => t.name === team.name);
+        var index = teams.findIndex((t: Team) => t.name === name);
+        var indexExists = teams.findIndex((t: Team) => t.name === team.name && t.name !== name);
+        if (indexExists !== -1) {
+            throw new Error("Team name already exists");
+        }
         teams[index] = team;
         this.storage.set(this.teams_key, teams);
-        return team;
+        return teams;
     }
 
-    public deleteTeam(team: Team): boolean {
+    public deleteTeamByName(name: string): Team[] {
         var teams = this.getAllTeams();
-        var index = teams.findIndex((t: Team) => t.name === team.name);
+        var index = teams.findIndex((t: Team) => t.name === name);
         teams.splice(index, 1);
         this.storage.set(this.teams_key, teams);
-        return true;
+        return teams;
     }
 
 }

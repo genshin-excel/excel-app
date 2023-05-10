@@ -1,9 +1,9 @@
 import React, { useState, useDeferredValue, useMemo } from 'react';
 import { Grid, Card, CardMedia, IconButton, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { charactersMap } from './database/characters_initData';
-import { Character } from './models/Character';
-import { Team } from './models/Team';
+import { charactersMap } from '../database/characters_initData';
+import { Character } from '../models/Character';
+import { Team } from '../models/Team';
 
 export type PickCharacterProps = {
     team: Team | null;
@@ -14,8 +14,9 @@ type Props = {
     onSelectImage: (pickedChar: Character) => void;
     oldChar: Character | null;
 };
-
+  
 const Dialogs: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) => {
+    
     const [searchValue, setSearchValue] = useState('');
     const deferredQuery = useDeferredValue(searchValue);
 

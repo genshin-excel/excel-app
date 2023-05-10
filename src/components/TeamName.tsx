@@ -1,5 +1,5 @@
 import React from 'react';
-import EditTextField from '../EditTextField';
+import EditTextField from './EditTextField';
 import { Delete, Edit } from '@mui/icons-material';
 import { Grid, Typography, IconButton } from '@mui/material';
 import { Team } from '../models/Team';

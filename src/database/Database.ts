@@ -1,25 +1,25 @@
 import { createContext } from 'react';
 import { DBStorage } from './DBStorage';
 import { TeamDAO } from './dao/TeamDAO';
-import { GenerateIdDAO } from './dao/GenerateIdDAO';
+import { ConfigDAO } from './dao/ConfigDAO';
 
 export class DatabaseContext {
     storage: DBStorage;
     private teamDAO: TeamDAO;
-    private generateIdDAO: GenerateIdDAO;
+    private configDAO: ConfigDAO;
 
     constructor(storage: DBStorage) {
         this.storage = storage
         this.teamDAO = new TeamDAO('teams', storage);
-        this.generateIdDAO = new GenerateIdDAO(0, storage);
+        this.configDAO = new ConfigDAO("config", 1, storage);
     }
 
     public getTeamDAO(): TeamDAO {
         return this.teamDAO;
     }
 
-    public getGenerateIdDAO(): GenerateIdDAO {
-        return this.generateIdDAO;
+    public getConfigDAO(): ConfigDAO {
+        return this.configDAO;
     }
 }
 export const DBContext = createContext({} as DatabaseContext)
