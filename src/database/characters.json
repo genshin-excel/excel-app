@@ -1,0 +1,47 @@
+[
+    {
+        "id": "jean",
+        "name": "Jean",
+        "thumbnail": "/images/characters/Character_Jean.png"
+    },
+    {
+        "id": "bennett",
+        "name": "Bennett",
+        "thumbnail": "/images/characters/Character_Bennett.png"
+    },
+    {
+        "id": "albedo",
+        "name": "Albedo",
+        "thumbnail": "/images/characters/Character_Albedo.png"
+    },
+    {
+        "id": "zhongli",
+        "name": "Zhongli",
+        "thumbnail": "/images/characters/Character_Alhaitham.png"
+    },
+    {
+        "id": "alhaitham",
+        "name": "Alhaitham",
+        "thumbnail": "/images/characters/Character_Alhaitham.png"
+    },
+    {
+        "id": "amber",
+        "name": "Amber",
+        "thumbnail": "/images/characters/Character_Amber.png"
+    },
+    {
+        "id": "barbara",
+        "name": "Barbara",
+        "thumbnail": "/images/characters/Character_Barbara.png"
+    },
+    {
+        "id": "beidou",
+        "name": "Beidou",
+        "thumbnail": "/images/characters/Character_Beidou.png"
+    },
+    {
+        "id": "diluc",
+        "name": "Diluc",
+        "thumbnail": "/images/characters/Character_Diluc.png"
+    }
+]

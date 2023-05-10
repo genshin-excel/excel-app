@@ -11,13 +11,13 @@ export class TeamDAO extends BaseDAO {
         this.teams_key = teams_key;
     }
 
-    public getTeamByName(name: string): Team|null{
+    public getTeamByName(name: string): Team | null {
         var teams = this.storage.get(this.teams_key);
         return teams.find((team: Team) => team.name === name);
     }
 
     public getAllTeams(): Team[] {
-        return this.storage.get(this.teams_key);
+        return this.storage.get(this.teams_key) || [];
     }
 
     public addTeam(team: Team): Team {
