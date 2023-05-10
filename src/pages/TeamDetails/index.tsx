@@ -1,19 +1,19 @@
-import React, { useState, useRef, useEffect, lazy } from 'react';
-import { Grid, Card, CardMedia, Button, Box, Typography, OutlinedInput, IconButton, Container, TextField } from '@mui/material';
+import React, { useState, lazy } from 'react';
+import { Grid, Card, CardMedia, Button, Box, Typography, OutlinedInput, IconButton, Container } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import FormControl from '@mui/material/FormControl';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import { Add } from '@mui/icons-material';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Team } from './models/Team';
-import { Character } from './models/Character';
-import { PickCharacterProps } from './CharacterPopUp';
-import EditTextField from './EditTextField';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Team } from '../../models/Team';
+import { Character } from '../../models/Character';
+import { PickCharacterProps } from '../../components/CharacterPopUp';
+import EditTextField from '../../components/EditTextField';
 
 
-const Dialogs = lazy(() => import('./CharacterPopUp'))
+const Dialogs = lazy(() => import('../../components/CharacterPopUp'))
 
 function TeamPage() {
     const [teams, setTeams] = useState(localStorage.getItem('teams') ? JSON.parse(localStorage.getItem('teams')!) as Team[] : []);
@@ -82,9 +82,8 @@ function TeamPage() {
             setTeamName(team.name);
         };
 
-        const location = useLocation();
-        const currentTeamName = decodeURIComponent(location.pathname.split('/').filter((p) => p !== '').pop()?.replace(/\+/g, ' ') || '');
-        const teamDisplay = teams.filter(team => team.name === currentTeamName);
+        const {teamIndex} = useParams();
+        const teamDisplay = teams.filter(team => team.name === teamIndex);
 
         const navigate = useNavigate();
         const handleChangeTeamName = (team: Team, newName: string) => {
