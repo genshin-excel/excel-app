@@ -6,3 +6,10 @@ export type Team = {
     dps: number;
     dpr: number;
 }
+
+export const emptyTeam: Team = {
+    name: "",
+    characters: [null, null, null, null],
+    dps: 0,
+    dpr: 0
+}

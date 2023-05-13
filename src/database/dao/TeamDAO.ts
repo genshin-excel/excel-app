@@ -2,7 +2,6 @@ import { Team } from "../../models/Team";
 import { BaseDAO } from "./BaseDAO";
 import { DBStorage } from "../DBStorage";
 
-
 export class TeamDAO extends BaseDAO {
     private teams_key: string;
 
@@ -37,7 +36,7 @@ export class TeamDAO extends BaseDAO {
         return newTeams;
     }
 
-    public updateTeamByName(name: string, team: Team): Team[] {
+    public updateTeamByName(name: string, team: Team): Team {
         var teams = this.getAllTeams();
         var index = teams.findIndex((t: Team) => t.name === name);
         var indexExists = teams.findIndex((t: Team) => t.name === team.name && t.name !== name);
@@ -46,7 +45,7 @@ export class TeamDAO extends BaseDAO {
         }
         teams[index] = team;
         this.storage.set(this.teams_key, teams);
-        return teams;
+        return team;
     }
 
     public deleteTeamByName(name: string): Team[] {
