@@ -2,7 +2,6 @@ import { Team } from "../../models/Team";
 import { BaseDAO } from "./BaseDAO";
 import { DBStorage } from "../DBStorage";
 
-
 export class TeamDAO extends BaseDAO {
     private teams_key: string;
 
