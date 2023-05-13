@@ -3,11 +3,8 @@ import { Grid, Box, Button, Container, TextField } from '@mui/material';
 import { Calculate } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { Team } from '../../models/Team';
-import { Character } from '../../models/Character';
-import { PickCharacterProps } from '../../components/CharacterPopUp';
 import { DBContext } from '../../database/Database';
 import TeamDisplay from '../../components/TeamDisplay';
-import { handleDeleteClick, handleEditClick, handleBlur, handleChangeTeamName, updateSelectedImage } from '../../components/eventHandlers/EventHandlers';
 
 function Body() {
     const database = useContext(DBContext);
@@ -27,16 +24,17 @@ function Body() {
         window.scrollTo(0, 0);
     };
 
-    const nullTeam: PickCharacterProps = {
-        team: null,
-        charIndex: -1,
+    const handleTeamChange = (team: Team, index: number) => {
+        const newTeams = [...teams];
+        newTeams[index] = team;
+        setTeams(newTeams);
     }
 
-    const [openDialog, setOpenDialog] = useState(nullTeam);
-
-    const setSelectedImage = (character: Character, team: Team, charIndex: number) => {
-        updateSelectedImage(character, team, charIndex, database, setTeams);
-    };
+    const handleDelete = (index: number) => {
+        const newTeams = [...teams];
+        newTeams.splice(index, 1);
+        setTeams(newTeams);
+    }
 
     return (
         <Container maxWidth="xl" sx={{ padding: 0 }}>
@@ -53,7 +51,11 @@ function Body() {
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Container maxWidth="lg">
                         <Grid container spacing={2}>
-                            <ListTeams />
+                        <Container maxWidth="lg">
+                            {teams.map((team, index) => (
+                                <TeamCard key={team.name} team={team} onChange={(newTeam)=> handleTeamChange(newTeam, index)} onDelete={()=> handleDelete(index)}/>
+                            ))}
+                        </Container>
                         </Grid>
                     </Container>
                 </Box>
@@ -61,35 +63,14 @@ function Body() {
         </Container>
     );
 
-    function ListTeams() {
-        return (
-            <Container maxWidth="lg">
-                {teams.map((team) => (
-                    <DisplayTeam key={team.name} team={team} />
-                ))}
-            </Container>
-        );
-    }
-
-    function DisplayTeam(props: { team: Team }) {
-        const { team } = props;
-        const [teamName, setTeamName] = useState('');
-        const [editingTeam, setEditingTeam] = useState<Team | null>(null);
-
+    function TeamCard({team, onChange, onDelete}: {team: Team, onChange: (team: Team) => void, onDelete: () => void}) {
         return (
             <>
                 <Grid container>
                     <TeamDisplay
                         team={team}
-                        handleDeleteClick={() => handleDeleteClick(team, database, setTeams, setEditingTeam)}
-                        handleEditClick={() => handleEditClick(team, setEditingTeam, setTeamName)}
-                        setTeamName={setTeamName}
-                        editingTeam={editingTeam}
-                        teamName={teamName}
-                        handleBlur={() => handleBlur(editingTeam, teamName, handleChangeTeamName, setEditingTeam, setTeamName, database, setTeams)}
-                        setSelectedImage={setSelectedImage}
-                        openDialog={openDialog}
-                        setOpenDialog={setOpenDialog}
+                        onDelete={onDelete}
+                        onTeamChange={onChange}
                     />
                 </Grid>
                 <Grid container spacing={2} key={team.name} sx={{ marginTop: '10px' }}>
