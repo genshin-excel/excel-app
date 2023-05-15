@@ -5,50 +5,55 @@ import { PickCharacterProps } from './CharacterPopUp';
 import { Grid, Card, CardMedia, Typography, IconButton } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import EditTextField from './EditTextField';
-import { Alert } from './Alert';
+import { Alert, ErrorName } from './Alert';
 import { DBContext } from '../database/Database';
 
 
 const Dialogs = lazy(() => import('./CharacterPopUp'))
 
-function TeamDisplay({team, onDelete, onTeamChange}: {team: Team, onDelete: () => void, onTeamChange: (team: Team) => void}) {
+function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: () => void, onTeamChange: (team: Team) => void }) {
     const database = useContext(DBContext);
     const [editingTeam, setEditingTeam] = useState<Team | null>(null);
     const [editTeamName, setEditTeamName] = useState('');
-
+    const [error, setError] = useState('');
+    const [showErrorModal, setShowErrorModal] = useState(false);
     console.log("TeamDisplay Team: " + team.name);
     console.log("TeamDisplay1: " + team.name);
-    
+
     const nullTeam: PickCharacterProps = {
         team: null,
         charIndex: -1,
     }
     const [openDialog, setOpenDialog] = useState(nullTeam);
 
-    const handleDeleteClick= () => {
+    const handleDeleteClick = () => {
         database.getTeamDAO().deleteTeamByName(team.name);
         onDelete();
     }
 
-    const handleNameEditClick= () => {
+    const handleNameEditClick = () => {
         setEditingTeam(team);
         setEditTeamName(team.name);
+        setError('');
+        setShowErrorModal(false);
     }
 
-    const handleNameEditBlur= () => {
+    const handleNameEditBlur = () => {
         if (editingTeam && editTeamName !== '') {
-            try{
+            try {
                 const newTeam = database.getTeamDAO().updateTeamByName(team.name, { ...team, name: editTeamName });
                 setEditingTeam(null);
                 setEditTeamName('');
                 onTeamChange(newTeam);
             } catch (e) {
                 console.log("Error updating team name:");
+                setError('This name already exists');
+                setShowErrorModal(true);
             }
         }
     }
 
-    const setSelectedImage = (character: Character, team: Team, charIndex: number) =>{
+    const setSelectedImage = (character: Character, team: Team, charIndex: number) => {
         const newTeam = { ...team };
         newTeam.characters[charIndex] = character;
         database.getTeamDAO().updateTeamByName(team.name, team);
@@ -61,7 +66,9 @@ function TeamDisplay({team, onDelete, onTeamChange}: {team: Team, onDelete: () =
             <Grid container spacing={2} key={team.name}>
                 <Grid item container key={team.name} xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginTop: '20px', marginBottom: '10px' }}>
                     {editingTeam === team ? (
-                        <EditTextField value={editTeamName} editFunc={setEditTeamName} onBlur={handleNameEditBlur} />
+                        <>
+                            <EditTextField value={editTeamName} editFunc={setEditTeamName} onBlur={handleNameEditBlur} />
+                        </>
                     ) : (
                         <>
                             <Typography variant="h4" component="h2">
@@ -77,6 +84,7 @@ function TeamDisplay({team, onDelete, onTeamChange}: {team: Team, onDelete: () =
                             </IconButton>
                         </>
                     )}
+                    <ErrorName showErrorModal={showErrorModal} setShowErrorModal={setShowErrorModal} error={error} />
                 </Grid>
             </Grid>
             <Grid container spacing={2} sx={{ alignItems: 'center', justifyContent: 'flex-start' }}>

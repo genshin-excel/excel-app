@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
-import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { Box, Typography, Button, Modal } from '@mui/material';
 
 interface AlertProps {
     children: React.ReactNode;
     handleDelete: () => void;
 }
+
+interface ErrorNameProps {
+    showErrorModal: boolean;
+    setShowErrorModal: React.Dispatch<React.SetStateAction<boolean>>;
+    error: string;
+}
+
 
 export function Alert({ children, handleDelete }: AlertProps) {
     const [open, setOpen] = useState(false);
@@ -48,19 +55,21 @@ export function Alert({ children, handleDelete }: AlertProps) {
     );
 }
 
-export function TextErrorAlert({ errorMessage }: { errorMessage: string }) {
+export function ErrorName({ showErrorModal, setShowErrorModal, error }: ErrorNameProps) {
     return (
-        <Dialog open={true} onClose={() => { }}>
-            <DialogTitle>Error</DialogTitle>
-            <DialogContent>
-                <DialogContentText>{errorMessage}</DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={() => { }} autoFocus>
-                    OK
-                </Button>
-            </DialogActions>
-        </Dialog>
+        <Modal
+            open={showErrorModal}
+            onClose={() => setShowErrorModal(false)}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+            <Box sx={{ width: 400, bgcolor: 'background.paper', boxShadow: 24, p: 2 }}>
+                <Typography variant="h6" component="div" sx={{ mb: 2 }}>
+                    Error
+                </Typography>
+                <Typography color="error">{error}</Typography>
+                <Button onClick={() => setShowErrorModal(false)}>Close</Button>
+            </Box>
+        </Modal>
     );
 }
 
