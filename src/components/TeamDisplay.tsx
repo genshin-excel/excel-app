@@ -11,14 +11,20 @@ import { DBContext } from '../database/Database';
 
 const Dialogs = lazy(() => import('./CharacterPopUp'))
 
+function temp() {
+    console.log("temp")
+    return "temp"
+}
+
 function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: () => void, onTeamChange: (team: Team) => void }) {
     const database = useContext(DBContext);
     const [editingTeam, setEditingTeam] = useState<Team | null>(null);
     const [editTeamName, setEditTeamName] = useState('');
     const [error, setError] = useState('');
     const [showErrorModal, setShowErrorModal] = useState(false);
+    // const tempVar = temp();
     console.log("TeamDisplay Team: " + team.name);
-    console.log("TeamDisplay1: " + team.name);
+    // console.log("TeamDisplay1: " + team.name);
 
     const nullTeam: PickCharacterProps = {
         team: null,
@@ -39,18 +45,26 @@ function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: (
     }
 
     const handleNameEditBlur = () => {
-        if (editingTeam && editTeamName !== '') {
+        console.log(`editTeamName: ${editTeamName}`)
+        if (editingTeam && editTeamName.trim() !== '') {
             try {
                 const newTeam = database.getTeamDAO().updateTeamByName(team.name, { ...team, name: editTeamName });
                 setEditingTeam(null);
                 setEditTeamName('');
                 onTeamChange(newTeam);
             } catch (e) {
-                console.log("Error updating team name:");
                 setError('This name already exists');
                 setShowErrorModal(true);
             }
+        } else if (editTeamName.trim() === ''){
+            setError('Team name cannot be empty');
+            setShowErrorModal(true);
         }
+    }
+
+    const handleCancelNameEdit = () => {
+        setEditingTeam(null);
+        setEditTeamName('');
     }
 
     const setSelectedImage = (character: Character, team: Team, charIndex: number) => {
@@ -59,15 +73,14 @@ function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: (
         database.getTeamDAO().updateTeamByName(team.name, team);
         onTeamChange(newTeam);
     }
-
-    console.log("TeamDisplay2: " + team.name);
+    // console.log("TeamDisplay2: " + team.name);
     return (
         <>
             <Grid container spacing={2} key={team.name}>
                 <Grid item container key={team.name} xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginTop: '20px', marginBottom: '10px' }}>
                     {editingTeam === team ? (
                         <>
-                            <EditTextField value={editTeamName} editFunc={setEditTeamName} onBlur={handleNameEditBlur} />
+                            <EditTextField value={editTeamName} editFunc={setEditTeamName} onBlur={handleNameEditBlur} onCancel={handleCancelNameEdit}/>            
                         </>
                     ) : (
                         <>

@@ -62,37 +62,43 @@ function Body() {
             </Container>
         </Container>
     );
-
-    function TeamCard({team, onChange, onDelete}: {team: Team, onChange: (team: Team) => void, onDelete: () => void}) {
-        return (
-            <>
-                <Grid container>
-                    <TeamDisplay
-                        team={team}
-                        onDelete={onDelete}
-                        onTeamChange={onChange}
-                    />
-                </Grid>
-                <Grid container spacing={2} key={team.name} sx={{ marginTop: '10px' }}>
-                    <Grid item container xs={12} spacing={2} key="dpr">
-                        <Grid item xs={12} sm={6}>
-                            <TextField fullWidth value={team.dpr} label="DPR" disabled />
-                        </Grid>
-                        <Grid item xs={12} sm={6} key="dps">
-                            <TextField fullWidth value={team.dps} label="DPS" disabled />
-                        </Grid>
-                    </Grid>
-                    <Grid item container xs={12} justifyContent="center" sx={{ mb: 2 }} key="button">
-                        <Link to={`/TeamPage/${team.name}`}>
-                            <Button variant="contained" color="primary" startIcon={<Calculate />} sx={{ maxWidth: '200px' }}>
-                                Calculate
-                            </Button>
-                        </Link>
-                    </Grid>
-                </Grid>
-            </>
-        );
-    }
 }
+
+const TeamCard = React.memo(({team, onChange, onDelete}: {team: Team, onChange: (team: Team) => void, onDelete: () => void}) => {
+    console.log(team.name);
+    return (
+        <>
+            <Grid container>
+                <TeamDisplay
+                    team={team}
+                    onDelete={onDelete}
+                    onTeamChange={onChange}
+                />
+            </Grid>
+            <Grid container spacing={2} key={team.name} sx={{ marginTop: '10px' }}>
+                <Grid item container xs={12} spacing={2} key="dpr">
+                    <Grid item xs={12} sm={6}>
+                        <TextField fullWidth value={team.dpr} label="DPR" disabled />
+                    </Grid>
+                    <Grid item xs={12} sm={6} key="dps">
+                        <TextField fullWidth value={team.dps} label="DPS" disabled />
+                    </Grid>
+                </Grid>
+                <Grid item container xs={12} justifyContent="center" sx={{ mb: 2 }} key="button">
+                    <Link to={`/TeamPage/${team.name}`}>
+                        <Button variant="contained" color="primary" startIcon={<Calculate />} sx={{ maxWidth: '200px' }}>
+                            Calculate
+                        </Button>
+                    </Link>
+                </Grid>
+            </Grid>
+        </>
+    );
+}
+// , (prevProps, nextProps) => {
+//     // Custom comparison function to determine if the component should update
+//     return prevProps.team.name === nextProps.team.name;
+// }
+);
 
 export default Body;
