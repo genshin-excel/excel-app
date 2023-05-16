@@ -11,20 +11,13 @@ import { DBContext } from '../database/Database';
 
 const Dialogs = lazy(() => import('./CharacterPopUp'))
 
-function temp() {
-    console.log("temp")
-    return "temp"
-}
-
-function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: () => void, onTeamChange: (team: Team) => void }) {
+function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: () => void, onTeamChange: (oldTeamName: string, newTeam: Team) => void }) {
     const database = useContext(DBContext);
     const [editingTeam, setEditingTeam] = useState<Team | null>(null);
     const [editTeamName, setEditTeamName] = useState('');
     const [error, setError] = useState('');
     const [showErrorModal, setShowErrorModal] = useState(false);
-    // const tempVar = temp();
-    console.log("TeamDisplay Team: " + team.name);
-    // console.log("TeamDisplay1: " + team.name);
+    console.log("TeamDisplay: " + team.name);
 
     const nullTeam: PickCharacterProps = {
         team: null,
@@ -51,7 +44,7 @@ function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: (
                 const newTeam = database.getTeamDAO().updateTeamByName(team.name, { ...team, name: editTeamName });
                 setEditingTeam(null);
                 setEditTeamName('');
-                onTeamChange(newTeam);
+                onTeamChange(team.name, newTeam);
             } catch (e) {
                 setError('This name already exists');
                 setShowErrorModal(true);
@@ -71,9 +64,8 @@ function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: (
         const newTeam = { ...team };
         newTeam.characters[charIndex] = character;
         database.getTeamDAO().updateTeamByName(team.name, team);
-        onTeamChange(newTeam);
+        onTeamChange(team.name, newTeam);
     }
-    // console.log("TeamDisplay2: " + team.name);
     return (
         <>
             <Grid container spacing={2} key={team.name}>
@@ -86,15 +78,15 @@ function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: (
                         <>
                             <Typography variant="h4" component="h2">
                                 {team.name}
-                            </Typography>
+                            </Typography>                           
+                            <IconButton aria-label="edit" onClick={() => handleNameEditClick()}>
+                                <Edit />
+                            </IconButton>
                             <Alert handleDelete={() => handleDeleteClick()}>
                                 <IconButton aria-label="delete">
                                     <Delete />
                                 </IconButton>
                             </Alert>
-                            <IconButton aria-label="edit" onClick={() => handleNameEditClick()}>
-                                <Edit />
-                            </IconButton>
                         </>
                     )}
                     <ErrorName showErrorModal={showErrorModal} setShowErrorModal={setShowErrorModal} error={error} />

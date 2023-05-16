@@ -8,7 +8,7 @@ import TeamDisplay from "../../components/TeamDisplay";
 interface TeamDetailsProps {
   team: Team;
   onDelete: () => void;
-  onTeamChange: (newTeam: Team) => void;
+  onTeamChange: (oldTeamName: string, newTeam: Team) => void;
 }
 
 function useFetchTeam(teamIndex: string | undefined) {
@@ -31,13 +31,12 @@ function useFetchTeam(teamIndex: string | undefined) {
 
       setTeam(fetchedTeam);
       setIsLoaded(true);
-      console.log(fetchedTeam);
     };
 
     fetchTeam();
   }, [database, navigate, teamIndex]);
 
-  const handleTeamChange = useMemo(() => (newTeam: Team) => {
+  const handleTeamChange = useMemo(() => (oldTeamName: string, newTeam: Team) => {
     navigate(`/TeamPage/${newTeam.name}`);
   }, [navigate]);
 
@@ -61,7 +60,7 @@ function TeamPage() {
     return null;
   }
 
-  console.log("Final: " + team.name);
+  console.log("TeamPage: " + team.name);
 
   return (
     <Container maxWidth="xl" sx={{ padding: 0 }}>

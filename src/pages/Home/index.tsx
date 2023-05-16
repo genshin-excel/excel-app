@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useCallback } from 'react';
 import { Grid, Box, Button, Container, TextField } from '@mui/material';
 import { Calculate } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
@@ -19,22 +19,23 @@ function Body() {
             dps: 0,
             dpr: 0,
         };
-        const newTeams = database.getTeamDAO().addTeam(newTeam);
-        setTeams(newTeams);
+        database.getTeamDAO().addTeam(newTeam);
+        setTeams((prevTeams) => [newTeam, ...prevTeams]);
         window.scrollTo(0, 0);
     };
 
-    const handleTeamChange = (team: Team, index: number) => {
-        const newTeams = [...teams];
-        newTeams[index] = team;
-        setTeams(newTeams);
-    }
+    const handleTeamChange = useCallback((oldTeamName: string, newTeam: Team) => {
+        setTeams((prevTeams) => {
+            const newTeams = [...prevTeams];
+            const index = newTeams.findIndex((team) => team.name === oldTeamName);
+            newTeams[index] = newTeam;
+            return newTeams;
+        });
+    }, [])
 
-    const handleDelete = (index: number) => {
-        const newTeams = [...teams];
-        newTeams.splice(index, 1);
-        setTeams(newTeams);
-    }
+    const handleDelete = useCallback((teamName: string) => {
+        setTeams((prevTeams) => prevTeams.filter((team) => team.name !== teamName));
+    },[])
 
     return (
         <Container maxWidth="xl" sx={{ padding: 0 }}>
@@ -53,7 +54,7 @@ function Body() {
                         <Grid container spacing={2}>
                         <Container maxWidth="lg">
                             {teams.map((team, index) => (
-                                <TeamCard key={team.name} team={team} onChange={(newTeam)=> handleTeamChange(newTeam, index)} onDelete={()=> handleDelete(index)}/>
+                                <TeamCard key={team.name} team={team} onChange={handleTeamChange} onDelete={handleDelete}/>
                             ))}
                         </Container>
                         </Grid>
@@ -64,14 +65,19 @@ function Body() {
     );
 }
 
-const TeamCard = React.memo(({team, onChange, onDelete}: {team: Team, onChange: (team: Team) => void, onDelete: () => void}) => {
+interface TeamCardProps {
+    team: Team;
+    onChange: (oldTeamName: string, newTeam: Team) => void;
+    onDelete: (teamName: string) => void;
+}
+const TeamCard: React.FC<TeamCardProps> = React.memo(({team, onChange, onDelete}) => {
     console.log(team.name);
     return (
         <>
             <Grid container>
                 <TeamDisplay
                     team={team}
-                    onDelete={onDelete}
+                    onDelete={()=>onDelete(team.name)}
                     onTeamChange={onChange}
                 />
             </Grid>
@@ -94,11 +100,6 @@ const TeamCard = React.memo(({team, onChange, onDelete}: {team: Team, onChange: 
             </Grid>
         </>
     );
-}
-// , (prevProps, nextProps) => {
-//     // Custom comparison function to determine if the component should update
-//     return prevProps.team.name === nextProps.team.name;
-// }
-);
+});
 
 export default Body;
