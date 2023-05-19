@@ -1,8 +1,7 @@
-import React, { useEffect, useRef} from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { TextField } from '@mui/material';
-import { Typography, IconButton , Grid} from '@mui/material';
+import { IconButton, Grid } from '@mui/material';
 import { Close } from '@mui/icons-material';
-
 
 interface Props {
   value: string;
@@ -21,31 +20,50 @@ function EditTextField({ value, editFunc, onBlur, onCancel }: Props) {
     }
   }, []);
 
-  const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => {
-    const { relatedTarget } = event;
-    if (cancelButtonRef.current && relatedTarget && cancelButtonRef.current.contains(relatedTarget)) {
-      return;
-    }
-    onBlur()
-  }
+  const handleBlur = useCallback(
+    (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { relatedTarget } = event;
+      if (cancelButtonRef.current && relatedTarget && cancelButtonRef.current.contains(relatedTarget)) {
+        return;
+      }
+      onBlur();
+    },
+    [onBlur]
+  );
+
+  const handleEditFunc = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      editFunc(event.target.value);
+    },
+    [editFunc]
+  );
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        onBlur();
+      }
+    },
+    [onBlur]
+  );
+
+  const handleCancel = useCallback(() => {
+    onCancel();
+  }, [onCancel]);
 
   return (
     <Grid container alignItems='center'>
       <TextField
-        id="team-name"
+        id='team-name'
         inputRef={editFieldRef}
         value={value}
-        onChange={(event) => editFunc(event.target.value)}
+        onChange={handleEditFunc}
         onBlur={handleBlur}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter') {
-            onBlur();
-        }}}
-        />
-      
-      <IconButton ref={cancelButtonRef}
-        aria-label="Cancel" onClick={()=>onCancel()} style={{color:'Red'}}>
-              <Close/>
+        onKeyDown={handleKeyDown}
+      />
+
+      <IconButton ref={cancelButtonRef} aria-label='Cancel' onClick={handleCancel} style={{ color: 'Red' }}>
+        <Close />
       </IconButton>
     </Grid>
   );

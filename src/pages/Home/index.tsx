@@ -70,36 +70,63 @@ interface TeamCardProps {
     onChange: (oldTeamName: string, newTeam: Team) => void;
     onDelete: (teamName: string) => void;
 }
-const TeamCard: React.FC<TeamCardProps> = React.memo(({team, onChange, onDelete}) => {
-    console.log(team.name);
-    return (
+const TeamCard: React.FC<TeamCardProps> = React.memo(
+    ({ team, onChange, onDelete }) => {
+      console.log(team.name);
+      return (
         <>
-            <Grid container>
-                <TeamDisplay
-                    team={team}
-                    onDelete={()=>onDelete(team.name)}
-                    onTeamChange={onChange}
-                />
+          <Grid container>
+            <TeamDisplay
+              team={team}
+              onDelete={() => onDelete(team.name)}
+              onTeamChange={onChange}
+            />
+          </Grid>
+          <Grid
+            container
+            spacing={2}
+            key={team.name}
+            sx={{ marginTop: '10px' }}
+          >
+            <Grid item container xs={12} spacing={2} key="dpr">
+              <Grid item xs={12} sm={6}>
+                <TextField fullWidth value={team.dpr} label="DPR" disabled />
+              </Grid>
+              <Grid item xs={12} sm={6} key="dps">
+                <TextField fullWidth value={team.dps} label="DPS" disabled />
+              </Grid>
             </Grid>
-            <Grid container spacing={2} key={team.name} sx={{ marginTop: '10px' }}>
-                <Grid item container xs={12} spacing={2} key="dpr">
-                    <Grid item xs={12} sm={6}>
-                        <TextField fullWidth value={team.dpr} label="DPR" disabled />
-                    </Grid>
-                    <Grid item xs={12} sm={6} key="dps">
-                        <TextField fullWidth value={team.dps} label="DPS" disabled />
-                    </Grid>
-                </Grid>
-                <Grid item container xs={12} justifyContent="center" sx={{ mb: 2 }} key="button">
-                    <Link to={`/TeamPage/${team.name}`}>
-                        <Button variant="contained" color="primary" startIcon={<Calculate />} sx={{ maxWidth: '200px' }}>
-                            Calculate
-                        </Button>
-                    </Link>
-                </Grid>
+            <Grid
+              item
+              container
+              xs={12}
+              justifyContent="center"
+              sx={{ mb: 2 }}
+              key="button"
+            >
+              <Link to={`/TeamPage/${team.name}`}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<Calculate />}
+                  sx={{ maxWidth: '200px' }}
+                >
+                  Calculate
+                </Button>
+              </Link>
             </Grid>
+          </Grid>
         </>
-    );
-});
+      );
+    },
+    (prevProps, nextProps) => {
+      return (
+        prevProps.team.name === nextProps.team.name &&
+        prevProps.team.dpr === nextProps.team.dpr &&
+        prevProps.team.dps === nextProps.team.dps
+      );
+    }
+  );
+  
 
 export default Body;
