@@ -43,5 +43,75 @@
         "id": "diluc",
         "name": "Diluc",
         "thumbnail": "/images/characters/Character_Diluc.png"
+    },
+    {
+        "id": "arataki_itto",
+        "name": "Arataki Itto",
+        "thumbnail": "/images/characters/Character_Arataki-Itto.png"
+    },
+    {
+        "id": "candace",
+        "name": "Candace",
+        "thumbnail": "/images/characters/Character_Candace.png"
+    },
+    {
+        "id": "chongyun",
+        "name": "Chongyun",
+        "thumbnail": "/images/characters/Character_Chongyun.png"
+    },
+    {
+        "id": "collei",
+        "name": "Collei",
+        "thumbnail": "/images/characters/Character_Collei.png"
+    },
+    {
+        "id": "cyno",
+        "name": "Cyno",
+        "thumbnail": "/images/characters/Character_Cyno.png"
+    },
+    {
+        "id": "dehya",
+        "name": "Dehya",
+        "thumbnail": "/images/characters/Character_Dehya.png"
+    },
+    {
+        "id": "diona",
+        "name": "Diona",
+        "thumbnail": "/images/characters/Character_Diona.png"
+    },
+    {
+        "id": "dori",
+        "name": "Dori",
+        "thumbnail": "/images/characters/Character_Dori.png"
+    },
+    {
+        "id": "eula",
+        "name": "Eula",
+        "thumbnail": "/images/characters/Character_Eula.png"
+    },
+    {
+        "id": "faruzan",
+        "name": "Faruzan",
+        "thumbnail": "/images/characters/Character_Faruzan.png"
+    },
+    {
+        "id": "fischl",
+        "name": "Fischl",
+        "thumbnail": "/images/characters/Character_Fischl.png"
+    },
+    {
+        "id": "ganyu",
+        "name": "Ganyu",
+        "thumbnail": "/images/characters/Character_Ganyu.png"
+    },
+    {
+        "id": "gorou",
+        "name": "Gorou",
+        "thumbnail": "/images/characters/Character_Gorou.png"
+    },
+    {
+        "id": "hu_tao",
+        "name": "Hu Tao",
+        "thumbnail": "/images/characters/Character_Hu-Tao.png"
     }
 ]

@@ -9,12 +9,11 @@ import { Alert, ErrorName } from './Alert';
 import { DBContext } from '../database/Database';
 
 
-const Dialogs = lazy(() => import('./CharacterPopUp'))
+const CharacterPopup = lazy(() => import('./CharacterPopUp'))
 
 function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: () => void, onTeamChange: (oldTeamName: string, newTeam: Team) => void }) {
     const database = useContext(DBContext);
-    const [editingTeam, setEditingTeam] = useState<Team | null>(null);
-    const [editTeamName, setEditTeamName] = useState('');
+    const [isEditingName, setIsEditingName] = useState(false);
     const [error, setError] = useState('');
     const [showErrorModal, setShowErrorModal] = useState(false);
     console.log("TeamDisplay: " + team.name);
@@ -31,33 +30,29 @@ function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: (
     }
 
     const handleNameEditClick = () => {
-        setEditingTeam(team);
-        setEditTeamName(team.name);
+        setIsEditingName(true);
         setError('');
         setShowErrorModal(false);
     }
 
-    const handleNameEditBlur = () => {
-        console.log(`editTeamName: ${editTeamName}`)
-        if (editingTeam && editTeamName.trim() !== '') {
+    const handleNameEditBlur = (newName: string) => {
+        if (isEditingName && newName.trim() !== '') {
             try {
-                const newTeam = database.getTeamDAO().updateTeamByName(team.name, { ...team, name: editTeamName });
-                setEditingTeam(null);
-                setEditTeamName('');
+                const newTeam = database.getTeamDAO().updateTeamByName(team.name, { ...team, name: newName });
+                setIsEditingName(false);
                 onTeamChange(team.name, newTeam);
             } catch (e) {
                 setError('This name already exists');
                 setShowErrorModal(true);
             }
-        } else if (editTeamName.trim() === ''){
+        } else if (newName.trim() === ''){
             setError('Team name cannot be empty');
             setShowErrorModal(true);
         }
     }
 
     const handleCancelNameEdit = () => {
-        setEditingTeam(null);
-        setEditTeamName('');
+        setIsEditingName(false);
     }
 
     const setSelectedImage = (character: Character, team: Team, charIndex: number) => {
@@ -70,9 +65,9 @@ function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: (
         <>
             <Grid container spacing={2} key={team.name}>
                 <Grid item container key={team.name} xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginTop: '20px', marginBottom: '10px' }}>
-                    {editingTeam === team ? (
+                    {isEditingName ? (
                         <>
-                            <EditTextField value={editTeamName} editFunc={setEditTeamName} onBlur={handleNameEditBlur} onCancel={handleCancelNameEdit}/>            
+                            <EditTextField value={team.name} onBlur={handleNameEditBlur} onCancel={handleCancelNameEdit}/>            
                         </>
                     ) : (
                         <>
@@ -94,13 +89,13 @@ function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: (
             </Grid>
             <Grid container spacing={2} sx={{ alignItems: 'center', justifyContent: 'flex-start' }}>
                 {[0, 1, 2, 3].map((index) => (
-                    <Grid item xs={6} sm={3} key={index}>
+                    <Grid item xs={3} key={index}>
                         <Card>
                             <CardMedia component="img" image={team.characters[index]?.thumbnail || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'} alt="team member" onClick={() => setOpenDialog({ team: team, charIndex: index })} />
                         </Card>
                         {openDialog.team === team && openDialog.charIndex === index && (
                             <Suspense fallback={null}>
-                                <Dialogs onClose={() => setOpenDialog(nullTeam)} onSelectImage={(pickedChar: Character) => setSelectedImage(pickedChar, team, index)} oldChar={team.characters[index]} />
+                                <CharacterPopup onClose={() => setOpenDialog(nullTeam)} onSelectImage={(pickedChar: Character) => setSelectedImage(pickedChar, team, index)} oldChar={team.characters[index]} />
                             </Suspense>
                         )}
                     </Grid>

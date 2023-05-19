@@ -12,3 +12,8 @@ export function Delay() {
     }
     console.log('run end');
 }
+
+export function Print({header, text}: {header: string, text: string}){
+    console.log(`\n${header}\n${text}\n`)
+    return null
+}
