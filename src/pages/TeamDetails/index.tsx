@@ -1,86 +1,64 @@
-import React, { useState, useContext, useEffect, useMemo, Suspense } from "react";
+import React, { useContext, Suspense, useCallback, useState } from "react";
 import { Grid, Box, Container } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
-import { Team, emptyTeam } from "../../models/Team";
+import { useParams, useNavigate, Navigate } from "react-router-dom";
+import { Team } from "../../models/Team";
 import { DBContext } from "../../database/Database";
 import TeamDisplay from "../../components/TeamDisplay";
 
-interface TeamDetailsProps {
-  team: Team;
-  onDelete: () => void;
-  onTeamChange: (oldTeamName: string, newTeam: Team) => void;
-}
-
-function useFetchTeam(teamIndex: string | undefined) {
-  const database = useContext(DBContext);
+function TeamDetails({ teamValue }: { teamValue: Team }) {
+  console.log("TeamDetails");
+  document.title = teamValue.name + " - Team Details";
   const navigate = useNavigate();
-  const [team, setTeam] = useState<Team>(emptyTeam);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [team, setTeam] = useState(teamValue);
 
-  useEffect(() => {
-    const fetchTeam = async () => {
-      if (!teamIndex) {
-        return;
+  const handleTeamChange = useCallback(
+    (oldTeamName: string, newTeam: Team) => {
+      if (oldTeamName !== newTeam.name) {
+        navigate(`/TeamPage/${newTeam.name}`);
       }
-
-      const fetchedTeam = await database.getTeamDAO().getTeamByName(teamIndex);
-      if (!fetchedTeam) {
-        navigate("/");
-        return;
-      }
-
-      setTeam(fetchedTeam);
-      setIsLoaded(true);
-    };
-
-    fetchTeam();
-  }, [database, navigate, teamIndex]);
-
-  const handleTeamChange = useMemo(() => (oldTeamName: string, newTeam: Team) => {
-    navigate(`/TeamPage/${newTeam.name}`);
-  }, [navigate]);
-
-  return { team, handleTeamChange, isLoaded };
-}
-
-function TeamDetails({ team, onDelete, onTeamChange }: TeamDetailsProps) {
-  return (
-    <Suspense fallback={null}>
-      <TeamDisplay team={team} onDelete={onDelete} onTeamChange={onTeamChange} />
-    </Suspense>
+      setTeam(newTeam);
+    },
+    [navigate]
   );
-}
-
-function TeamPage() {
-  const { teamIndex } = useParams<{ teamIndex: string }>();
-  const { team, handleTeamChange, isLoaded } = useFetchTeam(teamIndex);
-  const navigate = useNavigate();
-
-  if (!teamIndex || !isLoaded) {
-    return null;
-  }
-
-  console.log("TeamPage: " + team.name);
 
   return (
-    <Container maxWidth="xl" sx={{ padding: 0 }}>
+    // <Container maxWidth="xl" sx={{ padding: 0 }}>
       <Box sx={{ display: "flex", justifyContent: "center", margin: "26px 0" }}>
-        <Grid container>
+        {/* <Grid container> */}
           <Container maxWidth="xl">
-            <Grid container item spacing={2} xs={6}>
+            <Grid container spacing={2} maxWidth="sm">
               <Suspense fallback={null}>
-                <TeamDetails
+                <TeamDisplay
                   team={team}
                   onDelete={() => navigate("/")}
                   onTeamChange={handleTeamChange}
                 />
               </Suspense>
             </Grid>
-            <Grid container item spacing={2} xs={6}></Grid>
+            {/* <Grid container item spacing={2} xs={6}></Grid> */}
           </Container>
-        </Grid>
+        {/* </Grid> */}
       </Box>
-    </Container>
+    // {/* </Container> */}
+  );
+}
+
+function TeamPage() {
+  console.log("teamPage");
+  const { teamIndex } = useParams();
+  const database = useContext(DBContext);
+
+  if (!teamIndex) {
+    return <Navigate to="/" />;
+  }
+  var team = database.getTeamDAO().getTeamByName(teamIndex);
+  if (!team) {
+    return <Navigate to="/" />;
+  }
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TeamDetails teamValue={team} />
+    </Suspense>
   );
 }
 

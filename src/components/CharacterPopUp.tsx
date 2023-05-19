@@ -1,9 +1,9 @@
-import React, { useState, useDeferredValue, useMemo } from 'react';
-import { Grid, Card, CardMedia, IconButton, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import React, { useState, useMemo } from 'react';
+import { Grid, Card, CardMedia, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
 import { charactersMap } from '../database/characters_initData';
 import { Character } from '../models/Character';
 import { Team } from '../models/Team';
+import SearchField from './SearchField';
 
 export type PickCharacterProps = {
     team: Team | null;
@@ -15,25 +15,21 @@ type Props = {
     oldChar: Character | null;
 };
   
-const Dialogs: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) => {
+const CharacterPopup: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) => {
     
     const [searchValue, setSearchValue] = useState('');
-    const deferredQuery = useDeferredValue(searchValue);
+    console.log("CharacterPopup searchValue: " + searchValue);
 
     const filteredCharacters = useMemo(() => {
-        if (deferredQuery === '') {
+        if (searchValue === '') {
             return Array.from(charactersMap.values());
         } else {
             const filtered = Array.from(charactersMap.values()).filter((character) =>
-                character.name.toLowerCase().includes(deferredQuery.valueOf().toLowerCase())
+                character.name.toLowerCase().includes(searchValue.toLowerCase())
             );
             return filtered;
         }
-    }, [deferredQuery]);
-
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchValue(event.target.value)
-    };
+    }, [searchValue]);
 
     const handleImageClick = (character: Character) => {
         if (character.id !== oldChar?.id) {
@@ -43,26 +39,19 @@ const Dialogs: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) => {
     };
 
     return (
-        <Dialog open={true} onClose={onClose} fullWidth={true}>
+        <Dialog open={true} onClose={onClose} fullWidth={true} PaperProps={{
+            sx: {
+              display: 'flex',
+              justifyContent: 'center',
+              maxHeight: '80%',
+            },
+          }}>
             <DialogTitle>Choose character</DialogTitle>
             <DialogContent>
-                <TextField
-                    fullWidth
-                    label="Search"
-                    value={searchValue}
-                    onChange={handleSearchChange}
-                    InputProps={{
-                        endAdornment: (
-                            <IconButton disabled>
-                                <SearchIcon />
-                            </IconButton>
-                        ),
-                    }}
-                    sx={{ marginBottom: '16px', marginTop: '6px' }}
-                />
+                <SearchField setFinalValueHandler={setSearchValue}/>
                 <Grid container spacing={2} justifyContent="start">
                     {filteredCharacters.map((character) => (
-                        <Grid item sm={6} md={4} lg={3} key={character.id} sx={{ flexGrow: 1 }}>
+                        <Grid item xs={6} sm={4} md={3} key={character.id} sx={{ flexGrow: 1}}>
                             <Card
                                 onClick={() => handleImageClick(character)}
                                 sx={{
@@ -71,8 +60,11 @@ const Dialogs: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) => {
                                     cursor: 'pointer',
                                 }}
                             >
-                                <CardMedia component="img" image={character.thumbnail} alt={character.name} />
+                                <CardMedia component="img" image={character.thumbnail} alt={character.name}/>
                             </Card>
+                            <Typography component="h2" sx={{textAlign:'center'}}>
+                                {character.name}
+                            </Typography>
                         </Grid>
                     ))}
                 </Grid>
@@ -84,4 +76,4 @@ const Dialogs: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) => {
     );
 };
 
-export default Dialogs;
+export default CharacterPopup;
