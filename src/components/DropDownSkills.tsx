@@ -39,7 +39,7 @@ function DropDownSkills() {
   );
 
   return (
-    <Grid container>
+    <Grid container marginBottom="16px">
       {lines.map((line, lineIndex) => (
         <Grid item container xs={12} key={lineIndex} spacing={2}>
           {skills.map(({ id, options }) => (
