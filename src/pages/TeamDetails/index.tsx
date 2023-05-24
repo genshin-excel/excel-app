@@ -1,5 +1,5 @@
 import React, { useContext, Suspense, useCallback, useState } from "react";
-import { Grid } from "@mui/material";
+import { Grid, Button, Box } from "@mui/material";
 import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { Team } from "../../models/Team";
 import { DBContext } from "../../database/Database";
@@ -14,6 +14,7 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
   const navigate = useNavigate();
   const [team, setTeam] = useState(teamValue);
   const [selectedTab, setSelectedTab] = useState(0);
+  const [lineCount, setLineCount] = useState(1);
 
   const handleTeamChange = useCallback(
     (oldTeamName: string, newTeam: Team) => {
@@ -25,12 +26,12 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
     [navigate]
   );
 
+  const addLine = () => {
+    setLineCount(lineCount + 1);
+  };
+
   return (
-    <Grid
-      container
-      rowSpacing={2}
-      display="flex"
-    >
+    <Grid container rowSpacing={2} display="flex">
       <Grid item xs={12} display="flex">
         <Grid item md={6} sm={7} xs={11}>
           <Suspense fallback={null}>
@@ -52,12 +53,23 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
         </Grid>
       </Grid>
 
-      <Grid item container xs={12} display="flex" >
+      <Grid item container xs={12} display="flex">
+        {Array.from({ length: lineCount }).map((_, index) => (
+          <React.Fragment key={index}>
+            <Grid item md={6} sm={7} xs={11} marginTop="16px">
+              <DropDownSkills />
+            </Grid>
+            <Grid item md={6} sm={5} xs={1}>
+              <TabsContent selectedTab={selectedTab} />
+            </Grid>
+          </React.Fragment>
+        ))}
         <Grid item md={6} sm={7} xs={11} marginTop="16px">
-          <DropDownSkills />
-        </Grid>
-        <Grid item md={6} sm={5} xs={1}>
-          <TabsContent selectedTab={selectedTab} />
+          <Box display="flex" justifyContent="center" marginTop="16px">
+            <Button variant="contained" color="primary" onClick={addLine}>
+              Add Line
+            </Button>
+          </Box>
         </Grid>
       </Grid>
     </Grid>
