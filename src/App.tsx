@@ -17,7 +17,9 @@ function Content() {
     return (
         <DBContext.Provider value={dbContextObj}>
             <Grid container direction="column" minHeight="100vh">
-                <Grid item>
+                <Grid item sx={{
+                    position: "sticky", top: 0, zIndex: 9999,
+                }}>
                     <Navbar />
                 </Grid>
                 <Container maxWidth="xl" sx={{ px: { xs: 0.5, sm: 1, md: 2 } }}>

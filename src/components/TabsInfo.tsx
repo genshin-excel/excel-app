@@ -10,6 +10,7 @@ import {
   ListItem,
   ListItemText,
   IconButton,
+  Typography
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
@@ -57,9 +58,6 @@ function TabsInfo({
     >
       {isSmallScreen && (
         <>
-          <IconButton color="primary" aria-label="menu" onClick={toggleDrawer}>
-            <MenuIcon />
-          </IconButton>
           <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
             <List>
               {tabs.map((tab, index) => (
@@ -77,7 +75,31 @@ function TabsInfo({
               ))}
             </List>
           </Drawer>
+          {isDrawerOpen ? null : (
+            <Grid
+              container
+              direction="row"
+              alignItems="center"
+              justifyContent={isSmallScreen ? 'flex-end' : 'flex-start'}
+              sx={{
+                overflowX: 'auto',
+                position: 'sticky',
+                top: 0,
+                right: 0,
+                zIndex: 9999,
+                width: '100%',
+              }}
+            >
+              <Typography variant="body1" component="span">
+                {tabs[selectedTab].label}
+              </Typography>
+              <IconButton color="primary" aria-label="menu" onClick={toggleDrawer}>
+                <MenuIcon />
+              </IconButton>
+            </Grid>
+          )}
         </>
+
       )}
       {!isSmallScreen && (
         <Tabs
