@@ -6,7 +6,7 @@ import {
   useMediaQuery,
   IconButton,
   Drawer,
-  Grid
+  Grid,
 } from "@mui/material";
 import TabsDropdownComponents from "./TabsDropdownComponents";
 import TabsTextFieldComponents from "./TabsTextFieldComponents";
@@ -21,7 +21,9 @@ function TabsContent({
 }) {
   console.log("TabsContent: " + selectedTab);
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+  
+  // const isSmallScreen = false;
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {
@@ -39,23 +41,33 @@ function TabsContent({
             justifyContent={isSmallScreen ? "flex-end" : "flex-start"}
             sx={{
               overflowX: "auto",
-              position: "sticky",
-              top: 250,
+              position: "fixed",
+              top: "50%",
               right: 0,
               zIndex: 9999,
               width: "100%",
             }}
           >
-            <IconButton color="primary" aria-label="menu" onClick={toggleDrawer}>
+            <IconButton
+              color="primary"
+              aria-label="menu"
+              onClick={toggleDrawer}
+            >
               <ChevronLeftIcon />
             </IconButton>
-            <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer} PaperProps={{
-              sx: {
-                marginTop: "16px",
-                maxHeight: "100%",
-                top: '55%'
-              },
-            }}>
+            <Drawer
+              anchor="right"
+              open={isDrawerOpen}
+              // hideBackdrop={true}
+              onClose={toggleDrawer}
+              PaperProps={{
+                sx: {
+                  marginTop: "16px",
+                  maxHeight: "100%",
+                  top: "55%",
+                },
+              }}
+            >
               <Box
                 p={0}
                 sx={{
@@ -79,7 +91,6 @@ function TabsContent({
                       display: "flex",
                       maxWidth: "350px",
                       marginBottom: "16px",
-
                     }}
                   >
                     <TabsDropdownComponents />

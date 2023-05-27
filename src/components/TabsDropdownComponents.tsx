@@ -20,7 +20,7 @@ function TabsDropdownComponents() {
   );
 
   return (
-    <FormControl variant="outlined" fullWidth sx={{ minWidth: "150px", maxWidth: "300px",  marginLeft:"8px", marginRight: "8px"}}>
+    <FormControl variant="outlined" fullWidth sx={{ minWidth: "150px", maxWidth: "300px", marginLeft:"8px", marginRight: "8px"}}>
       <InputLabel id="name-label">Name</InputLabel>
       <Select
         labelId="name-label"

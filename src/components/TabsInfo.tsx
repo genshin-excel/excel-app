@@ -10,7 +10,7 @@ import {
   ListItem,
   ListItemText,
   IconButton,
-  Typography
+  Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
@@ -41,7 +41,7 @@ function TabsInfo({
   );
 
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {
@@ -75,31 +75,32 @@ function TabsInfo({
               ))}
             </List>
           </Drawer>
-          {isDrawerOpen ? null : (
-            <Grid
-              container
-              direction="row"
-              alignItems="center"
-              justifyContent={isSmallScreen ? 'flex-end' : 'flex-start'}
-              sx={{
-                overflowX: 'auto',
-                position: 'sticky',
-                top: 0,
-                right: 0,
-                zIndex: 9999,
-                width: '100%',
-              }}
+          <Grid
+            container
+            direction="row"
+            alignItems="center"
+            justifyContent={isSmallScreen ? "flex-end" : "flex-start"}
+            sx={{
+              overflowX: "auto",
+              position: "sticky",
+              top: 0,
+              right: 0,
+              zIndex: 9999,
+              width: "100%",
+            }}
+          >
+            <Typography variant="body1" component="span">
+              {tabs[selectedTab].label}
+            </Typography>
+            <IconButton
+              color="primary"
+              aria-label="menu"
+              onClick={toggleDrawer}
             >
-              <Typography variant="body1" component="span">
-                {tabs[selectedTab].label}
-              </Typography>
-              <IconButton color="primary" aria-label="menu" onClick={toggleDrawer}>
-                <MenuIcon />
-              </IconButton>
-            </Grid>
-          )}
+              <MenuIcon />
+            </IconButton>
+          </Grid>
         </>
-
       )}
       {!isSmallScreen && (
         <Tabs
