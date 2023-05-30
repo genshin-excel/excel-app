@@ -7,14 +7,14 @@ import {
   useTheme,
   Drawer,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
   IconButton,
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
-function TabsInfo({
+function TabsTitle({
   selectedTab,
   setSelectedTab,
 }: {
@@ -61,9 +61,8 @@ function TabsInfo({
           <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
             <List>
               {tabs.map((tab, index) => (
-                <ListItem
+                <ListItemButton
                   key={index}
-                  button
                   selected={selectedTab === index}
                   onClick={() => {
                     setSelectedTab(index);
@@ -71,7 +70,7 @@ function TabsInfo({
                   }}
                 >
                   <ListItemText primary={tab.label} />
-                </ListItem>
+                </ListItemButton>
               ))}
             </List>
           </Drawer>
@@ -119,4 +118,4 @@ function TabsInfo({
   );
 }
 
-export default TabsInfo;
+export default TabsTitle;

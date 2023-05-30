@@ -1,25 +1,24 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Fab } from '@material-ui/core';
-import { Add } from '@material-ui/icons';
+import React, { useState, useEffect } from 'react';
+import { Typography } from '@mui/material';
 
-const useStyles = makeStyles((theme) => ({
-  floatingIcon: {
-    position: 'fixed',
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
-    zIndex: 9999, // Ensures the icon appears above other elements
-  },
-}));
+const BlinkingText = () => {
+  const [isVisible, setIsVisible] = useState(true);
 
-const FloatingIcon = () => {
-  const classes = useStyles();
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsVisible((prevIsVisible) => !prevIsVisible);
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <Fab className={classes.floatingIcon} color="primary">
-      <Add />
-    </Fab>
+    <div style={{ textAlign: 'center' }}>
+      <Typography variant="h4" component="span" color={isVisible ? 'primary' : 'transparent'}>
+        Hello World
+      </Typography>
+    </div>
   );
 };
 
-export default FloatingIcon;
+export default BlinkingText;

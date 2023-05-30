@@ -1,12 +1,15 @@
-import React, { useContext, Suspense, useCallback, useState } from "react";
+import React, { useContext, Suspense, useCallback, useState, useRef, useEffect } from "react";
 import { Grid, Button, Box, useTheme, useMediaQuery } from "@mui/material";
 import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { Team } from "../../models/Team";
 import { DBContext } from "../../database/Database";
 import TeamDisplay from "../../components/TeamDisplay";
 import DropDownSkills from "../../components/DropDownSkills";
-import TabsInfo from "../../components/TabsInfo";
+import TabsTitle from "../../components/TabsTitle";
 import TabsContent from "../../components/TabsContent";
+import TableTabs from "../../components/TableTabs";
+import BlinkingText from '..//../TestPage';
+
 
 function TeamDetails({ teamValue }: { teamValue: Team }) {
   console.log("TeamDetails");
@@ -15,6 +18,7 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
   const [team, setTeam] = useState(teamValue);
   const [selectedTab, setSelectedTab] = useState(0);
   const [lineCount, setLineCount] = useState(1);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -34,6 +38,18 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
     setLineCount(lineCount + 1);
   };
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [lineCount]);
+
+  const tabContent = [
+    <TabsContent selectedTab={selectedTab} lineCount={lineCount} />,
+    <BlinkingText />,
+    <TableTabs />,
+  ];
+
   return (
     <Grid container rowSpacing={2} display="flex">
       {isSmallScreen && (
@@ -49,7 +65,7 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
               background: "#fff",
             }}
           >
-            <TabsInfo
+            <TabsTitle
               selectedTab={selectedTab}
               setSelectedTab={setSelectedTab}
             />
@@ -82,12 +98,11 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
               <Grid container justifyContent="flex-end">
                 <Grid
                   item
-                  // md={6} sm={4}
+                // md={6} sm={4}
                 >
-                  <TabsContent
-                    selectedTab={selectedTab}
-                    lineCount={lineCount}
-                  />
+                  {selectedTab < tabContent.length ? (
+                    tabContent[selectedTab]
+                  ) : null}
                 </Grid>
               </Grid>
             </Grid>
@@ -99,7 +114,7 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
               marginTop="16px"
             >
               {Array.from({ length: lineCount }).map((_, index) => (
-                <DropDownSkills />
+                <DropDownSkills key={index} />
               ))}
             </Grid>
 
@@ -141,14 +156,16 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
                   />
                 </Suspense>
               </Grid>
-              <Grid item md={6}></Grid>
+              <Grid item md={6} sx={{ pt: 10, pl: 4 }}>
+                <TableTabs />
+              </Grid>
               <Grid item md={6}></Grid>
               <Grid
                 item
                 md={6}
                 sx={{ display: "flex", alignItems: "flex-end" }}
               >
-                <TabsInfo
+                <TabsTitle
                   selectedTab={selectedTab}
                   setSelectedTab={setSelectedTab}
                 />
@@ -161,7 +178,9 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
                 ))}
               </Grid>
               <Grid item md={6}>
-                <TabsContent selectedTab={selectedTab} lineCount={lineCount} />
+                {selectedTab < tabContent.length ? (
+                  tabContent[selectedTab]
+                ) : null}
               </Grid>
               <Grid item md={6} marginTop="16px">
                 <Box display="flex" justifyContent="center" marginTop="16px">
@@ -173,8 +192,10 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
             </Grid>
           </Grid>
         </>
-      )}
-    </Grid>
+      )
+      }
+      <Grid item xs={12} ref={scrollRef} />
+    </Grid >
   );
 }
 
