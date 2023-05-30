@@ -13,9 +13,6 @@ function DialogEq({ open, handleClose }: Props) {
 
     return (
         <>
-            <Button variant="outlined" onClick={handleClickOpen}>
-                Add Equipment
-            </Button>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Add Equipment</DialogTitle>
                 <DialogContent>

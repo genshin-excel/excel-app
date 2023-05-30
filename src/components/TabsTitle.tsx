@@ -7,14 +7,14 @@ import {
   useTheme,
   Drawer,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
   IconButton,
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 
-function TabsInfo({
+function TabsTitle({
   selectedTab,
   setSelectedTab,
 }: {
@@ -23,7 +23,7 @@ function TabsInfo({
 }) {
   console.log("TabsInfo");
 
-  const tabs = [
+  let tabs = [
     { label: "Item One", info: "Info for Item One" },
     { label: "Item Two", info: "Info for Item Two" },
     { label: "Item Three", info: "Info for Item Three" },
@@ -42,6 +42,15 @@ function TabsInfo({
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+
+  if (isSmallScreen) {
+    tabs = [
+      { label: "Rotation", info: "Info for Item One" },
+      { label: "Summary", info: "Info for Item Two" },
+      ...tabs,
+    ];
+  }
+
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {
@@ -61,9 +70,8 @@ function TabsInfo({
           <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
             <List>
               {tabs.map((tab, index) => (
-                <ListItem
+                <ListItemButton
                   key={index}
-                  button
                   selected={selectedTab === index}
                   onClick={() => {
                     setSelectedTab(index);
@@ -71,7 +79,7 @@ function TabsInfo({
                   }}
                 >
                   <ListItemText primary={tab.label} />
-                </ListItem>
+                </ListItemButton>
               ))}
             </List>
           </Drawer>
@@ -119,4 +127,4 @@ function TabsInfo({
   );
 }
 
-export default TabsInfo;
+export default TabsTitle;

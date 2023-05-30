@@ -15,7 +15,7 @@ interface LineState {
   selectedSkills: SelectedSkills;
 }
 
-function DropDownSkills() {
+function DropDownSkills({ lineCount }: { lineCount: number }) {
   console.log("DropDownSkills");
   const [lines, setLines] = useState<LineState[]>([{ selectedSkills: {} }]);
 
@@ -39,7 +39,9 @@ function DropDownSkills() {
   );
 
   return (
-    <Grid container marginBottom="16px">
+    <>
+    {Array.from({ length: lineCount }).map((_, index) => (
+      <Grid container marginBottom="16px">
       {lines.map((line, lineIndex) => (
         <Grid item container xs={12} key={lineIndex} spacing={2}>
           {skills.map(({ id, options }) => (
@@ -67,6 +69,9 @@ function DropDownSkills() {
         </Grid>
       ))}
     </Grid>
+    ))}
+    </>
+    
   );
 }
 export default DropDownSkills;
