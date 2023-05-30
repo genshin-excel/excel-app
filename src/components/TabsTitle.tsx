@@ -23,7 +23,7 @@ function TabsTitle({
 }) {
   console.log("TabsInfo");
 
-  const tabs = [
+  let tabs = [
     { label: "Item One", info: "Info for Item One" },
     { label: "Item Two", info: "Info for Item Two" },
     { label: "Item Three", info: "Info for Item Three" },
@@ -42,6 +42,15 @@ function TabsTitle({
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
+
+  if (isSmallScreen) {
+    tabs = [
+      { label: "Rotation", info: "Info for Item One" },
+      { label: "Summary", info: "Info for Item Two" },
+      ...tabs,
+    ];
+  }
+
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {

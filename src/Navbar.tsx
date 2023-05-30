@@ -45,9 +45,10 @@ function ScrollTop(props: Props) {
 }
 
 const pages = [
-    { name: 'Rotation', link: '#/rotationPage' },
-    { name: 'TestPage', link: '#/testPage' },
-    { name: 'Reset LocalStorage', link: '#' },
+    { name: 'Home', link: '/' },
+    { name: 'Rotation', link: '/rotationPage' },
+    { name: 'TestPage', link: '/testPage' },
+    { name: 'Reset LocalStorage', link: '/' },
 ];
 
 const drawerWidth = 240;
@@ -78,7 +79,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     alignItems: 'center',
     padding: theme.spacing(0, 1),
     ...theme.mixins.toolbar,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
 }));
 
 export default function NavBar(props: Props) {
@@ -105,7 +106,7 @@ export default function NavBar(props: Props) {
                                 <Typography
                                     variant="h6"
                                     component="a"
-                                    href="#"
+                                    href="/"
                                     sx={{
                                         ml: 2,
                                         fontWeight: 200,
@@ -138,13 +139,13 @@ export default function NavBar(props: Props) {
                                         boxSizing: 'border-box',
                                     },
                                 }}
-                                variant="persistent"
                                 anchor="right"
                                 open={open}
+                                onClose={handleDrawerClose}
                             >
                                 <DrawerHeader>
                                     <IconButton onClick={handleDrawerClose}>
-                                        {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                                    {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                                     </IconButton>
                                 </DrawerHeader>
                                 <Divider />
@@ -198,7 +199,7 @@ export default function NavBar(props: Props) {
                                 <Typography
                                     variant="h6"
                                     component="a"
-                                    href="#"
+                                    href="/"
                                     sx={{
                                         mr: 2,
                                         fontWeight: 700,

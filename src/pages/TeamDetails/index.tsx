@@ -1,4 +1,11 @@
-import React, { useContext, Suspense, useCallback, useState, useRef, useEffect } from "react";
+import React, {
+  useContext,
+  Suspense,
+  useCallback,
+  useState,
+  useRef,
+  useEffect,
+} from "react";
 import { Grid, Button, Box, useTheme, useMediaQuery } from "@mui/material";
 import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { Team } from "../../models/Team";
@@ -8,8 +15,8 @@ import DropDownSkills from "../../components/DropDownSkills";
 import TabsTitle from "../../components/TabsTitle";
 import TabsContent from "../../components/TabsContent";
 import TableTabs from "../../components/TableTabs";
-import BlinkingText from '..//../TestPage';
-
+import BlinkingText from "..//../TestPage";
+import DialogEq from "../../components/DialogEq";
 
 function TeamDetails({ teamValue }: { teamValue: Team }) {
   console.log("TeamDetails");
@@ -19,10 +26,10 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
   const [selectedTab, setSelectedTab] = useState(0);
   const [lineCount, setLineCount] = useState(1);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [openCharConfig, setOpenCharConfig] = useState(false);
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-  // const isSmallScreen = false;
 
   const handleTeamChange = useCallback(
     (oldTeamName: string, newTeam: Team) => {
@@ -44,12 +51,6 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
     }
   }, [lineCount]);
 
-  const tabContent = [
-    <TabsContent selectedTab={selectedTab} lineCount={lineCount} />,
-    <BlinkingText />,
-    <TableTabs />,
-  ];
-
   return (
     <Grid container rowSpacing={2} display="flex">
       {isSmallScreen && (
@@ -63,6 +64,7 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
               top: 50,
               zIndex: "10",
               background: "#fff",
+              paddingTop: 0,
             }}
           >
             <TabsTitle
@@ -70,66 +72,41 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
               setSelectedTab={setSelectedTab}
             />
           </Grid>
-          <Grid
-            item
-            xs={12}
-            sx={{
-              position: "sticky",
-              top: 100,
-              zIndex: "10",
-              background: "#fff",
-            }}
-          >
-            <Suspense fallback={null}>
-              <TeamDisplay
-                team={team}
-                onDelete={() => navigate("/")}
-                onTeamChange={handleTeamChange}
-              />
-            </Suspense>
-          </Grid>
+          {selectedTab === 0 && (
+            <Grid
+              item
+              xs={12}
+              sx={{
+                position: "sticky",
+                top: 105,
+                zIndex: "10",
+                background: "#fff",
+              }}
+            >
+              <Suspense fallback={null}>
+                <TeamDisplay
+                  team={team}
+                  onDelete={() => navigate("/")}
+                  onTeamChange={handleTeamChange}
+                />
+              </Suspense>
+            </Grid>
+          )}
 
           <Grid item container xs={12} display="flex" justifyContent="flex-end">
-            <Grid
-              item
-              xs={12}
-              sx={{ position: "sticky", top: 320, zIndex: 100 }}
-            >
-              <Grid container justifyContent="flex-end">
-                <Grid
-                  item
-                // md={6} sm={4}
-                >
-                  {selectedTab < tabContent.length ? (
-                    tabContent[selectedTab]
-                  ) : null}
-                </Grid>
+            <Grid item xs={12} marginTop="16px">
+              <TabsContent selectedTab={selectedTab} lineCount={lineCount} />
+            </Grid>
+
+            {selectedTab !== 1 && (
+              <Grid item xs={12} marginTop="16px">
+                <Box display="flex" justifyContent="center" marginTop="16px">
+                  <Button variant="contained" color="primary" onClick={addLine}>
+                    Add Line
+                  </Button>
+                </Box>
               </Grid>
-            </Grid>
-
-            <Grid
-              item
-              //  md={6} sm={4}
-              xs={12}
-              marginTop="16px"
-            >
-              {Array.from({ length: lineCount }).map((_, index) => (
-                <DropDownSkills key={index} />
-              ))}
-            </Grid>
-
-            <Grid
-              item
-              // md={6} sm={4}
-              xs={12}
-              marginTop="16px"
-            >
-              <Box display="flex" justifyContent="center" marginTop="16px">
-                <Button variant="contained" color="primary" onClick={addLine}>
-                  Add Line
-                </Button>
-              </Box>
-            </Grid>
+            )}
           </Grid>
         </>
       )}
@@ -142,7 +119,7 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
               xs={12}
               sx={{
                 position: "sticky",
-                top: "56px",
+                top: "64px",
                 zIndex: 10,
                 background: "#fff",
               }}
@@ -156,10 +133,23 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
                   />
                 </Suspense>
               </Grid>
-              <Grid item md={6} sx={{ pt: 10, pl: 4 }}>
+              <Grid
+                item
+                md={6}
+                sx={{
+                  paddingLeft: "32px",
+                  display: "flex",
+                  alignItems: "flex-end",
+                }}
+              >
                 <TableTabs />
               </Grid>
-              <Grid item md={6}></Grid>
+              <Grid item md={6}>
+                <Button variant="outlined" onClick={()=>setOpenCharConfig(true)}>Char Details</Button>
+                {openCharConfig &&(
+                  <DialogEq open={true} handleClose={()=>setOpenCharConfig(false)}/>
+                )}
+              </Grid>
               <Grid
                 item
                 md={6}
@@ -173,14 +163,10 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
             </Grid>
             <Grid item container xs={12} marginTop="16px">
               <Grid item md={6} marginTop="16px">
-                {Array.from({ length: lineCount }).map((_, index) => (
-                  <DropDownSkills key={index} />
-                ))}
+                <DropDownSkills lineCount={lineCount} />
               </Grid>
-              <Grid item md={6}>
-                {selectedTab < tabContent.length ? (
-                  tabContent[selectedTab]
-                ) : null}
+              <Grid item md={6} paddingLeft="32px">
+                <TabsContent selectedTab={selectedTab} lineCount={lineCount} />
               </Grid>
               <Grid item md={6} marginTop="16px">
                 <Box display="flex" justifyContent="center" marginTop="16px">
@@ -192,10 +178,9 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
             </Grid>
           </Grid>
         </>
-      )
-      }
+      )}
       <Grid item xs={12} ref={scrollRef} />
-    </Grid >
+    </Grid>
   );
 }
 

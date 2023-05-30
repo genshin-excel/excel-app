@@ -11,6 +11,9 @@ import {
 import TabsDropdownComponents from "./TabsDropdownComponents";
 import TabsTextFieldComponents from "./TabsTextFieldComponents";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import TableTabs from "../components/TableTabs";
+import BlinkingText from "../TestPage";
+import DropDownSkills from "../components/DropDownSkills";
 
 function TabsContent({
   selectedTab,
@@ -22,8 +25,19 @@ function TabsContent({
   console.log("TabsContent: " + selectedTab);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
-  
-  // const isSmallScreen = false;
+
+  let tabContent = [];
+  if (isSmallScreen) {
+    tabContent.push(<DropDownSkills lineCount={lineCount} />);
+    tabContent.push(<TableTabs />);
+  }
+
+  for (let i = 0; i < 7; i++) {
+    tabContent.push(
+      <DetailConfig lineCount={lineCount} />
+    );
+  }
+
   const [isDrawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {
@@ -32,7 +46,7 @@ function TabsContent({
 
   return (
     <>
-      {isSmallScreen && (
+      {/* {isSmallScreen && (
         <>
           <Grid
             container
@@ -109,50 +123,55 @@ function TabsContent({
             </Drawer>
           </Grid>
         </>
-      )}
+      )} */}
 
-      {!isSmallScreen && (
-        <Box
-          p={0}
-          sx={{
-            display: "flex",
-            overflowX: "auto",
-            height: "100%",
-            marginLeft: "32px",
-            alignItems: "flex-end",
-            paddingTop: "16px",
-            paddingLeft: "8px",
-            paddingRight: "8px",
-            border: "1px solid #adb5bd",
-            flexDirection: "column",
-          }}
-          component={Paper}
-        >
-          {Array.from({ length: lineCount }).map((_, index) => (
-            <Box
-              p={0}
-              key={index}
-              sx={{
-                display: "flex",
-                maxWidth: "100%",
-                marginBottom: "16px",
-              }}
-            >
-              <TabsDropdownComponents />
-              <TabsTextFieldComponents />
-              <TabsTextFieldComponents />
-              <TabsDropdownComponents />
-              <TabsTextFieldComponents />
-              <TabsTextFieldComponents />
-              <TabsDropdownComponents />
-              <TabsDropdownComponents />
-              <TabsTextFieldComponents />
-              <TabsDropdownComponents />
-            </Box>
-          ))}
-        </Box>
+      {true && (
+        tabContent[selectedTab]
       )}
     </>
+  );
+}
+
+function DetailConfig({ lineCount }: { lineCount: number }) {
+  return (
+    <Box
+      p={0}
+      sx={{
+        display: "flex",
+        overflowX: "auto",
+        height: "100%",
+        alignItems: "flex-end",
+        paddingTop: "16px",
+        paddingLeft: "8px",
+        paddingRight: "8px",
+        border: "1px solid #adb5bd",
+        flexDirection: "column",
+      }}
+      component={Paper}
+    >
+      {Array.from({ length: lineCount }).map((_, index) => (
+        <Box
+          p={0}
+          key={index}
+          sx={{
+            display: "flex",
+            maxWidth: "100%",
+            marginBottom: "16px",
+          }}
+        >
+          <TabsDropdownComponents />
+          <TabsTextFieldComponents />
+          <TabsTextFieldComponents />
+          <TabsDropdownComponents />
+          <TabsTextFieldComponents />
+          <TabsTextFieldComponents />
+          <TabsDropdownComponents />
+          <TabsDropdownComponents />
+          <TabsTextFieldComponents />
+          <TabsDropdownComponents />
+        </Box>
+      ))}
+    </Box>
   );
 }
 
