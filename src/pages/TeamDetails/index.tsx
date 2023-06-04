@@ -7,7 +7,7 @@ import React, {
   useEffect,
 } from "react";
 import { Grid, Button, Box, useTheme, useMediaQuery } from "@mui/material";
-import { useParams, useNavigate, Navigate } from "react-router-dom";
+import { useParams, useNavigate, Navigate, Link } from "react-router-dom";
 import { Team } from "../../models/Team";
 import { DBContext } from "../../database/Database";
 import TeamDisplay from "../../components/TeamDisplay";
@@ -15,8 +15,7 @@ import DropDownSkills from "../../components/DropDownSkills";
 import TabsTitle from "../../components/TabsTitle";
 import TabsContent from "../../components/TabsContent";
 import TableTabs from "../../components/TableTabs";
-import BlinkingText from "..//../TestPage";
-import DialogEq from "../../components/DialogEq";
+// import DialogEq from "../../components/DialogEq";
 
 function TeamDetails({ teamValue }: { teamValue: Team }) {
   console.log("TeamDetails");
@@ -26,7 +25,7 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
   const [selectedTab, setSelectedTab] = useState(0);
   const [lineCount, setLineCount] = useState(1);
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const [openCharConfig, setOpenCharConfig] = useState(false);
+  // const [openCharConfig, setOpenCharConfig] = useState(false);
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -145,10 +144,12 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
                 <TableTabs />
               </Grid>
               <Grid item md={6}>
-                <Button variant="outlined" onClick={()=>setOpenCharConfig(true)}>Char Details</Button>
-                {openCharConfig &&(
-                  <DialogEq open={true} handleClose={()=>setOpenCharConfig(false)}/>
-                )}
+                <Button variant="outlined" component={Link} to={"/characterConfig"}>
+                  Char Details
+                </Button>
+                {/* {openCharConfig && (
+                  <DialogEq open={true} handleClose={() => setOpenCharConfig(false)} />
+                )} */}
               </Grid>
               <Grid
                 item
