@@ -10,6 +10,7 @@ const Body = lazy(() => import('./pages/Home'))
 const TeamPage = lazy(() => import('./pages/TeamDetails'))
 const Rotation = lazy(() => import('./Rotation'))
 const Test = lazy(() => import('./TestPage'))
+const CharacterConfig = lazy(() => import('./components/CharacterConfig'))
 
 function Content() {
     const dbContextObj = new DatabaseContext(new DBLocalStorage(localStorage));
@@ -28,6 +29,7 @@ function Content() {
                                 <Route path="/TeamPage/:teamIndex" element={<TeamPage />} />
                                 <Route path="/rotationPage" element={<Rotation />} />
                                 <Route path="/testPage" element={<Test />} />
+                                <Route path="/characterConfig" element={<CharacterConfig />} />
                             </Routes>
                         </BrowserRouter>
                     </Suspense>
