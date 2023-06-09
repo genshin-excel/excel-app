@@ -2,7 +2,6 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import { styled } from "@mui/system";
 
-import CharacterConfigTitle from './components/CharacterConfigTilte';
 
 // const titles = ["Character", "Weapon", "Set Bonus", "Set Up", "Artifact", "Sub Stats", "Stats", "Add Stats"];
 // const ConfigCard = styled(Grid)(({ theme }) => ({
