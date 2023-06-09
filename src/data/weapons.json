@@ -1,0 +1,27 @@
+[
+    {
+        "id": "amenoma_kageuchi",
+        "name": "Amenoma Kageuchi",
+        "thumbnail": "/images/weapons/Weapon_Amenoma-Kageuchi.png"
+    },
+    {
+        "id": "amos_bow",
+        "name": "Amos bow",
+        "thumbnail": "/images/weapons/Weapon_Amos-bow.png"
+    },
+    {
+        "id": "aquila_favonia",
+        "name": "Aquila Favonia",
+        "thumbnail": "/images/weapons/Weapon_Aquila-Favonia.png"
+    },
+    {
+        "id": "calamity_queller",
+        "name": "Calamity Queller",
+        "thumbnail": "/images/weapons/Weapon_Calamity-Queller.png"
+    },
+    {
+        "id": "kagura's_verity",
+        "name": "Kagura's Verity",
+        "thumbnail": "/images/weapons/Weapon_Kagura's-Verity.png"
+    }
+]

@@ -1,0 +1,12 @@
+[
+    {
+        "id": "blizzard_strayer",
+        "name": "Blizzard Strayer",
+        "thumbnail": "/images/artifacts/Artifact_Blizzard-Strayer.png"
+    },
+    {
+        "id": "heart_of_depth",
+        "name": "Heart of Depth",
+        "thumbnail": "/images/artifacts/Artifact_Heart-of-Depth.png"
+    }
+]

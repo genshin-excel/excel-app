@@ -1,39 +1,39 @@
 import React, { useState, useMemo } from 'react';
 import { Grid, Card, CardMedia, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
-import { charactersMap } from '../database/characters_initData';
-import { Character } from '../models/Character';
-import { Team } from '../models/Team';
 import SearchField from './SearchField';
+import { artifactsMap } from '../database/Artifacts_initData';
+import { Artifact } from '../models/Artifacts';
+import { Team } from '../models/Team';
 
-export type PickCharacterProps = {
+export type PickArtifactProps = {
     team: Team | null;
-    charIndex: number;
+    artifactIndex: number;
 };
 type Props = {
     onClose: () => void;
-    onSelectImage: (pickedChar: Character) => void;
-    oldChar: Character | null;
+    onSelectImage: (pickedArtifact: Artifact) => void;
+    oldArtifact: Artifact | null;
 };
 
-const CharacterPopup: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) => {
+const ArtifactPopup: React.FC<Props> = ({ onClose, onSelectImage, oldArtifact }) => {
 
     const [searchValue, setSearchValue] = useState('');
-    console.log("CharacterPopup searchValue: " + searchValue);
+    console.log("ArtifactPopup searchValue: " + searchValue);
 
-    const filteredCharacters = useMemo(() => {
+    const filteredArtifacts = useMemo(() => {
         if (searchValue === '') {
-            return Array.from(charactersMap.values());
+            return Array.from(artifactsMap.values());
         } else {
-            const filtered = Array.from(charactersMap.values()).filter((character) =>
-                character.name.toLowerCase().includes(searchValue.toLowerCase())
+            const filtered = Array.from(artifactsMap.values()).filter((artifact) =>
+                artifact.name.toLowerCase().includes(searchValue.toLowerCase())
             );
             return filtered;
         }
     }, [searchValue]);
 
-    const handleImageClick = (character: Character) => {
-        if (character.id !== oldChar?.id) {
-            onSelectImage(character);
+    const handleImageClick = (artifact: Artifact) => {
+        if (artifact.id !== oldArtifact?.id) {
+            onSelectImage(artifact);
         }
         onClose();
     };
@@ -46,24 +46,24 @@ const CharacterPopup: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) =>
                 maxHeight: '80%',
             },
         }}>
-            <DialogTitle>Choose Character</DialogTitle>
+            <DialogTitle>Choose Artifact</DialogTitle>
             <DialogContent>
                 <SearchField setFinalValueHandler={setSearchValue} />
                 <Grid container spacing={2} justifyContent="start">
-                    {filteredCharacters.map((character) => (
-                        <Grid item xs={6} sm={4} md={3} key={character.id} sx={{ flexGrow: 1 }}>
+                    {filteredArtifacts.map((artifact) => (
+                        <Grid item xs={6} sm={4} md={3} key={artifact.id} sx={{ flexGrow: 1 }}>
                             <Card
-                                onClick={() => handleImageClick(character)}
+                                onClick={() => handleImageClick(artifact)}
                                 sx={{
-                                    border: oldChar?.id === character.id ? '2px solid #1976d2' : '',
+                                    border: oldArtifact?.id === artifact.id ? '2px solid #1976d2' : '',
                                     borderRadius: '16px',
                                     cursor: 'pointer',
                                 }}
                             >
-                                <CardMedia component="img" image={character.thumbnail} alt={character.name} />
+                                <CardMedia component="img" image={artifact.thumbnail} alt={artifact.name} />
                             </Card>
                             <Typography component="h2" sx={{ textAlign: 'center' }}>
-                                {character.name}
+                                {artifact.name}
                             </Typography>
                         </Grid>
                     ))}
@@ -76,4 +76,4 @@ const CharacterPopup: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) =>
     );
 };
 
-export default CharacterPopup;
+export default ArtifactPopup;
