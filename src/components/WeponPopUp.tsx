@@ -1,39 +1,39 @@
 import React, { useState, useMemo } from 'react';
 import { Grid, Card, CardMedia, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
-import { charactersMap } from '../database/characters_initData';
-import { Character } from '../models/Character';
+import { Weapon } from '../models/Weapon';
 import { Team } from '../models/Team';
 import SearchField from './SearchField';
+import { weaponsMap } from '../database/weapons_initData';
 
-export type PickCharacterProps = {
+export type PickWeaponProps = {
     team: Team | null;
-    charIndex: number;
+    weaponIndex: number;
 };
 type Props = {
     onClose: () => void;
-    onSelectImage: (pickedChar: Character) => void;
-    oldChar: Character | null;
+    onSelectImage: (pickedWeapon: Weapon) => void;
+    oldWeapon: Weapon | null;
 };
 
-const CharacterPopup: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) => {
+const WeaponPopup: React.FC<Props> = ({ onClose, onSelectImage, oldWeapon }) => {
 
     const [searchValue, setSearchValue] = useState('');
-    console.log("CharacterPopup searchValue: " + searchValue);
+    console.log("WeaponPopup searchValue: " + searchValue);
 
-    const filteredCharacters = useMemo(() => {
+    const filteredWeapons = useMemo(() => {
         if (searchValue === '') {
-            return Array.from(charactersMap.values());
+            return Array.from(weaponsMap.values());
         } else {
-            const filtered = Array.from(charactersMap.values()).filter((character) =>
-                character.name.toLowerCase().includes(searchValue.toLowerCase())
+            const filtered = Array.from(weaponsMap.values()).filter((weapon) =>
+                weapon.name.toLowerCase().includes(searchValue.toLowerCase())
             );
             return filtered;
         }
     }, [searchValue]);
 
-    const handleImageClick = (character: Character) => {
-        if (character.id !== oldChar?.id) {
-            onSelectImage(character);
+    const handleImageClick = (weapon: Weapon) => {
+        if (weapon.id !== oldWeapon?.id) {
+            onSelectImage(weapon);
         }
         onClose();
     };
@@ -46,24 +46,24 @@ const CharacterPopup: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) =>
                 maxHeight: '80%',
             },
         }}>
-            <DialogTitle>Choose Character</DialogTitle>
+            <DialogTitle>Choose Weapon</DialogTitle>
             <DialogContent>
                 <SearchField setFinalValueHandler={setSearchValue} />
                 <Grid container spacing={2} justifyContent="start">
-                    {filteredCharacters.map((character) => (
-                        <Grid item xs={6} sm={4} md={3} key={character.id} sx={{ flexGrow: 1 }}>
+                    {filteredWeapons.map((weapon) => (
+                        <Grid item xs={6} sm={4} md={3} key={weapon.id} sx={{ flexGrow: 1 }}>
                             <Card
-                                onClick={() => handleImageClick(character)}
+                                onClick={() => handleImageClick(weapon)}
                                 sx={{
-                                    border: oldChar?.id === character.id ? '2px solid #1976d2' : '',
+                                    border: oldWeapon?.id === weapon.id ? '2px solid #1976d2' : '',
                                     borderRadius: '16px',
                                     cursor: 'pointer',
                                 }}
                             >
-                                <CardMedia component="img" image={character.thumbnail} alt={character.name} />
+                                <CardMedia component="img" image={weapon.thumbnail} alt={weapon.name} />
                             </Card>
                             <Typography component="h2" sx={{ textAlign: 'center' }}>
-                                {character.name}
+                                {weapon.name}
                             </Typography>
                         </Grid>
                     ))}
@@ -76,4 +76,4 @@ const CharacterPopup: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) =>
     );
 };
 
-export default CharacterPopup;
+export default WeaponPopup;

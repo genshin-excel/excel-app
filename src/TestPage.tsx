@@ -1,24 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { Typography } from '@mui/material';
+import React from 'react';
+import { Grid } from '@mui/material';
+import { styled } from "@mui/system";
 
-const BlinkingText = () => {
-  const [isVisible, setIsVisible] = useState(true);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsVisible((prevIsVisible) => !prevIsVisible);
-    }, 100);
+// const titles = ["Character", "Weapon", "Set Bonus", "Set Up", "Artifact", "Sub Stats", "Stats", "Add Stats"];
+// const ConfigCard = styled(Grid)(({ theme }) => ({
+// backgroundColor: "rgba(0, 0, 0, 0.2)",
+// padding: "8px",
+//   '& .MuiGrid-item': {
+//     marginBottom: theme.spacing(1),
+//   },
+//   '& > .MuiGrid-root': {
+//     rowGap: theme.spacing(0.5),
+//   },
+// }));
 
-    return () => clearInterval(interval);
-  }, []);
+const MainComponent = () => {
+    return (
+        <>
+            <Grid></Grid>
+        </>
+        // <Grid container>
+        //   {/* ...other code... */}
+        //   {titles.map((title, index) => (
+        //     <Grid key={index} item xs={12} sm={6} md={6}>
+        //       <ConfigCard container rowSpacing={1}>
+        //         <CharacterConfigTitle title={title} />
+        //         {/* ...other code specific to each section... */}
+        //       </ConfigCard>
 
-  return (
-    <div style={{ textAlign: 'center' }}>
-      <Typography variant="h4" component="span" color={isVisible ? 'primary' : 'transparent'}>
-        Hello World
-      </Typography>
-    </div>
-  );
-};
+        //     </Grid>
 
-export default BlinkingText;
+        //   ))}
+        //   {/* ...other code... */}
+        // </Grid>
+    );
+}
+
+export default MainComponent;
