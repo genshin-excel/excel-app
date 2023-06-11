@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Suspense } from "react";
+import React, { useState, Suspense } from "react";
 import {
   Grid,
   Card,
@@ -7,15 +7,10 @@ import {
   TextField,
   Button,
   Checkbox,
-  FormControl,
-  InputLabel,
   MenuItem,
-  Select,
-  SelectChangeEvent,
   Divider,
   InputAdornment,
   styled,
-  Autocomplete,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import WeaponPopup from "./WeponPopUp";
@@ -41,6 +36,12 @@ const CustomTextField = styled(TextField)`
   }
 `;
 
+const StyledDeleteIcon = styled(DeleteIcon)`
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 const RowName = styled(Typography)(({ theme }) => ({
   paddingBottom: "7px",
   textAlign: "right",
@@ -61,6 +62,15 @@ export default function CharacterConfig() {
     max: Number(item[3]),
   }));
 
+  let characterBaseStats = [
+    ["Base HP", 14352],
+    ["Base ATK", 352],
+    ["Base DEF", 675],
+  ].map((item) => ({
+    name: String(item[0]),
+    value: Number(item[1]),
+  }));
+
   let weaponConfigs = [
     ["Refinement", 0, 1, 5],
     ["Ascension", 0, 0, 6],
@@ -72,21 +82,18 @@ export default function CharacterConfig() {
     max: Number(item[3]),
   }));
 
-  // const weaponConfigs = ["Refine", "Ascens", "Level"];
-  const setUp = ["Attack", "Skill", "Burst"];
-
   const [checked, setChecked] = useState(true);
-  const [showStats, setShowStats] = useState(false);
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  // const [showStats, setShowStats] = useState(false);
+  // const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   // const [valuesChar, setValuesChar] = useState(
   //   Array(characterConfigs.length).fill(0)
   // );
-  const [valuesWeapon, setValuesWeapon] = useState(
-    Array(weaponConfigs.length).fill(0)
-  );
+  // const [valuesWeapon, setValuesWeapon] = useState(
+  //   Array(weaponConfigs.length).fill(0)
+  // );
   const [values, setValues] = useState(Array(weaponConfigs.length).fill(0));
-  const [stats, setStats] = React.useState("");
-  const [number, setNumber] = useState(0);
+  // const [stats, setStats] = React.useState("");
+  // const [number, setNumber] = useState(0);
   const [openChar, setOpenChar] = useState(false);
   const [openWeapon, setOpenWeapon] = useState(false);
   const [openArtifact, setOpenArtifact] = useState(false);
@@ -128,14 +135,14 @@ export default function CharacterConfig() {
   //   setValuesChar(newValues);
   // };
 
-  const handleChangeWeapon = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    const newValues = [...valuesWeapon];
-    newValues[index] = Number(event.target.value);
-    setValuesWeapon(newValues);
-  };
+  // const handleChangeWeapon = (
+  //   event: React.ChangeEvent<HTMLInputElement>,
+  //   index: number
+  // ) => {
+  //   const newValues = [...valuesWeapon];
+  //   newValues[index] = Number(event.target.value);
+  //   setValuesWeapon(newValues);
+  // };
 
   const handleChangeSetUp = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -150,21 +157,9 @@ export default function CharacterConfig() {
     setChecked(event.target.checked);
   };
 
-  const handleChange = () => {
-    setNumber(number + 1);
-    setShowStats(true);
-  };
-
-  const scrollToBottom = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop =
-        scrollContainerRef.current.scrollHeight;
-    }
-  };
-
-  const handleChangeStats = (event: SelectChangeEvent) => {
-    setStats(event.target.value);
-  };
+  // const handleChangeStats = (event: SelectChangeEvent) => {
+  //   setStats(event.target.value);
+  // };
 
   let substats = [
     ["HP%", 0.198, "%"],
@@ -185,7 +180,7 @@ export default function CharacterConfig() {
   let finalStats = [
     ["ATK", 0, "+"],
     ["EM", 0, "+"],
-    ["HP", 0, "+"],
+    ["HP", 40000, "+"],
     ["DEF", 0, "+"],
     ["CRIT", 0, "%"],
     ["CRIT DMG", 0, "%"],
@@ -230,15 +225,58 @@ export default function CharacterConfig() {
     },
   ];
 
+  const initialStats = {
+    title: "Blizzard Strayer",
+    name: [
+      "ATK%",
+      "ATK",
+      "HP%",
+      "HP",
+      "DEF%",
+      "DEF",
+      "EM",
+      "ER",
+      "ELE DMG",
+      "PHY DMG",
+      "CRIT DMG",
+      "CRIT RATE",
+      "HEALING",
+    ],
+    values: "40000",
+  };
+  const [stastBonus, setStatsBonus] = useState<
+    { title: string; name: string[]; values: string }[]
+  >([initialStats]);
+
+  const handleAddStatsChange = () => {
+    setStatsBonus((prevStats) => [...prevStats, { ...initialStats }]);
+  };
+
+  const handleDelete = (index: number) => {
+    setStatsBonus((prevStats) => {
+      const updatedStats = [...prevStats];
+      updatedStats.splice(index, 1);
+      return updatedStats;
+    });
+  };
+
+  const handleDeleteArtifactSet = (index: number) => {
+    setArtifactSets((prevSets) => {
+      const updatedSets = [...prevSets];
+      updatedSets.splice(index, 1);
+      return updatedSets;
+    });
+  };
+
   return (
     <>
       <Grid container columnSpacing={1} rowSpacing={2} maxWidth="xl">
         {/*---------------------Character------------------------------ */}
-        <Grid item xs={12} sm={6} md={6}>
+        <Grid container item xs={12} sm={12} md={12} lg={6}>
           <CharacterConfigCard title="Character">
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} sm={3} md={3} lg={3}>
               <Grid item>
-                <Card sx={{ maxWidth: "100%", maxHeight: "100%" }}>
+                <Card>
                   <CardMedia
                     component="img"
                     image={character.thumbnail}
@@ -268,48 +306,80 @@ export default function CharacterConfig() {
                 </Suspense>
               </Grid>
             </Grid>
-            <Grid item xs={12} md={9} container rowSpacing={1}>
-              {characterConfigs.map((item, index) => (
-                <Grid
-                  key={index}
-                  item
-                  container
-                  display="flex"
-                  justifyContent="flex-end"
-                  alignItems="flex-end"
-                  pl={2}
-                  xs={12}
-                >
-                  <Grid item xs={6}>
-                    <RowName>{item.name}</RowName>
+            <Grid container item xs={12} sm={9} md={9} lg={9} pt={1}>
+              <Grid item container xs={6} rowSpacing={1}>
+                {characterConfigs.map((item, index) => (
+                  <Grid
+                    key={index}
+                    item
+                    container
+                    display="flex"
+                    justifyContent="flex-end"
+                    alignItems="flex-end"
+                    pl={1}
+                    xs={12}
+                  >
+                    <Grid item xs={6} pr={1}>
+                      <RowName>{item.name}</RowName>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <CustomTextField
+                        variant="filled"
+                        fullWidth
+                        type="number"
+                        defaultValue={item.value}
+                        // onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                        //   handleChangeCharacter(event, index)
+                        // }
+                        inputProps={{
+                          min: item.min,
+                          max: item.max,
+                          step: 1,
+                        }}
+                      />
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6}>
-                    <CustomTextField
-                      variant="filled"
-                      fullWidth
-                      type="number"
-                      defaultValue={item.value}
-                      // onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                      //   handleChangeCharacter(event, index)
-                      // }
-                      inputProps={{
-                        min: item.min,
-                        max: item.max,
-                        step: 1,
-                      }}
-                      sx={{ pl: 2 }}
-                    />
+                ))}
+              </Grid>
+              <Grid item container xs={6} rowSpacing={1}>
+                {characterBaseStats.map((item, index) => (
+                  <Grid
+                    key={index}
+                    item
+                    container
+                    display="flex"
+                    justifyContent="flex-end"
+                    alignItems="flex-end"
+                    pl={1}
+                    xs={12}
+                  >
+                    <Grid item xs={6} pr={1}>
+                      <RowName>{item.name}</RowName>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <CustomTextField
+                        variant="filled"
+                        fullWidth
+                        type="number"
+                        defaultValue={item.value.toFixed(2)}
+                        InputProps={{
+                          readOnly: true,
+                          tabIndex: -1,
+                        }}
+                        // sx={{ pl: 2 }}
+                      />
+                    </Grid>
                   </Grid>
-                </Grid>
-              ))}
+                ))}
+              </Grid>
             </Grid>
           </CharacterConfigCard>
         </Grid>
 
         {/*---------------------Weapon------------------------------ */}
-        <Grid item xs={12} sm={6} md={6}>
+        <Grid container item xs={12} sm={12} md={12} lg={6}>
           <CharacterConfigCard title="Weapon">
-            <Grid item md={3}>
+            <Grid item xs={12} sm={3} md={3} lg={3}>
               <Grid item>
                 <Card sx={{ maxWidth: "100%", maxHeight: "100%" }}>
                   <CardMedia
@@ -341,10 +411,7 @@ export default function CharacterConfig() {
                 </Suspense>
               </Grid>
             </Grid>
-            <Grid
-              item
-              md={9}
-              container
+            <Grid container item xs={12} sm={9} md={9} lg={9} pt={1}
               justifyContent="flex-end"
               rowSpacing={1}
             >
@@ -381,19 +448,20 @@ export default function CharacterConfig() {
         </Grid>
 
         {/*---------------------Artifact Set------------------------------ */}
-        <Grid item xs={12} sm={6} md={4}>
-          {/* {artifactImages.map((artifactImage, index) => ( */}
+        <Grid container item xs={12} sm={12} md={12} lg={5}>
           <CharacterConfigCard title="Artifact Set">
-            <Grid item container xs={12} rowSpacing={1} columnSpacing={1}>
+            <Grid container item xs={12} pb={1}
+              rowSpacing={1}
+              columnSpacing={1}
+            >
               {artifactSets.map((artifactSet, index) => (
-                <Grid item container sm={12} md={6} key={index}>
-                  <Grid
-                    container
+                <Grid container item sm={6} md={4} lg={6} key={index}>
+                  <Grid container item
                     alignItems="center"
                     justifyContent="center"
                     sx={{ backgroundColor: "#f5f5f5" }}
                   >
-                    <Grid item xs={4} md={12} lg={4} p={1} key={index}>
+                    <Grid item xs={4} md={4} lg={4} p={1} key={index}>
                       <Card sx={{ maxWidth: "100%", maxHeight: "100%" }}>
                         <CardMedia
                           component="img"
@@ -403,7 +471,7 @@ export default function CharacterConfig() {
                       </Card>
                     </Grid>
 
-                    <Grid item container xs={8} md={12} lg={8}>
+                    <Grid item container xs={8} md={8} lg={8}>
                       <Grid item xs={12} pl={1}>
                         <Typography> {artifactSet.name} </Typography>
                       </Grid>
@@ -438,10 +506,9 @@ export default function CharacterConfig() {
                         <Typography textAlign="center">4</Typography>
                       </Grid>
                       <Grid item display="flex" alignItems="center" xs={2}>
-                        <DeleteIcon
-                          sx={{
-                            color: "red",
-                          }}
+                        <StyledDeleteIcon
+                          sx={{ color: "red" }}
+                          onClick={() => handleDeleteArtifactSet(index)}
                         />
                       </Grid>
                     </Grid>
@@ -450,9 +517,6 @@ export default function CharacterConfig() {
               ))}
             </Grid>
 
-            <Grid item xs={12}>
-              <Divider />
-            </Grid>
             <Grid item md={12} textAlign="center">
               <Button
                 disabled={artifactSets.length >= 3}
@@ -476,11 +540,64 @@ export default function CharacterConfig() {
               </Suspense>
             </Grid>
           </CharacterConfigCard>
-          {/* ))} */}
+        </Grid>
+
+        {/*---------------------Artifact Main Stats------------------------------ */}
+        <Grid container item xs={12} sm={6} md={6} lg={4}>
+          <CharacterConfigCard title="Artifact Main Stats">
+            <Grid item md={12} container rowSpacing={1}>
+              {artifactMainStats.map((stats, index) => (
+                <Grid
+                  item
+                  container
+                  xs={12}
+                  display="flex"
+                  alignItems="flex-end"
+                  justifyContent="flex-end"
+                  key={index}
+                >
+                  <Grid item xs={4}>
+                    <RowName>{stats.name}</RowName>
+                  </Grid>
+                  <Grid item xs={8}>
+                    <CustomTextField
+                      variant="filled"
+                      fullWidth
+                      select
+                      defaultValue={stats.values[0]}
+                      sx={{ pl: 2 }}
+                    >
+                      {stats.values.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </CustomTextField>
+                  </Grid>
+                  {/* <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                    <InputLabel id="small-label">stats</InputLabel>
+                    <Select
+                      labelId="small-label"
+                      id="select-small"
+                      value={stats}
+                      label="Age"
+                      onChange={handleChangeStats}
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem>
+                      <MenuItem value={10}>HP</MenuItem>
+                      <MenuItem value={20}>HP%</MenuItem>
+                    </Select>
+                  </FormControl> */}
+                </Grid>
+              ))}
+            </Grid>
+          </CharacterConfigCard>
         </Grid>
 
         {/*---------------------Talents------------------------------ */}
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid container item xs={12} sm={6} md={6} lg={3}>
           <CharacterConfigCard title="Talents">
             <Grid
               item
@@ -524,69 +641,8 @@ export default function CharacterConfig() {
           </CharacterConfigCard>
         </Grid>
 
-        {/*---------------------Artifact Main Stats------------------------------ */}
-        <Grid item xs={12} sm={6} md={4}>
-          <CharacterConfigCard title="Artifact Main Stats">
-            <Grid item md={12} container rowSpacing={1}>
-              {artifactMainStats.map((stats, index) => (
-                <Grid
-                  item
-                  container
-                  xs={12}
-                  display="flex"
-                  alignItems="flex-end"
-                  justifyContent="flex-end"
-                  key={index}
-                >
-                  <Grid item xs={6}>
-                    <RowName>{stats.name}</RowName>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <CustomTextField
-                      variant="filled"
-                      fullWidth
-                      select
-                      defaultValue={stats.values[0]}
-                      sx={{
-                        pl: 2,
-                        // textAlign: 'center',
-                        // '& .MuiInputBase-input': {
-                        //   textAlign: 'center',
-                        //   pandingBottom:'32px'
-                        // },
-                      }}
-                    >
-                      {stats.values.map((option) => (
-                        <MenuItem key={option} value={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
-                    </CustomTextField>
-                  </Grid>
-                  {/* <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                    <InputLabel id="small-label">stats</InputLabel>
-                    <Select
-                      labelId="small-label"
-                      id="select-small"
-                      value={stats}
-                      label="Age"
-                      onChange={handleChangeStats}
-                    >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
-                      <MenuItem value={10}>HP</MenuItem>
-                      <MenuItem value={20}>HP%</MenuItem>
-                    </Select>
-                  </FormControl> */}
-                </Grid>
-              ))}
-            </Grid>
-          </CharacterConfigCard>
-        </Grid>
-
         {/*---------------------Substats------------------------------ */}
-        <Grid item xs={12} md={4}>
+        <Grid container item xs={12} sm={6} md={6} lg={3}>
           <CharacterConfigCard title="Sub stats">
             <Grid item container rowSpacing={1}>
               {substats.map((item, index) => (
@@ -637,7 +693,7 @@ export default function CharacterConfig() {
         </Grid>
 
         {/*---------------------Final Character Stats------------------------------ */}
-        <Grid item xs={12} md={4}>
+        <Grid container item xs={12} sm={6} md={6} lg={3}>
           <CharacterConfigCard title="Final Character Stats">
             <Grid item container rowSpacing={1}>
               {finalStats.map((item, index) => (
@@ -693,48 +749,65 @@ export default function CharacterConfig() {
         </Grid>
 
         {/*---------------------Stats Bonus------------------------------ */}
-        <Grid item xs={12} md={4}>
+        <Grid container item xs={12} md={12} lg={6}>
           <CharacterConfigCard title="Stats Bonus">
-            <Grid item container rowSpacing={1}>
-              {showStats &&
-                Array.from({ length: number }).map((_, index) => (
-                  <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={12}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    p={2}
-                    key={index}
-                  >
-                    <RowName>Title</RowName>
-                    <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                      <InputLabel id="demo-select-small-label">ATK</InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        label="ATK"
-                        onChange={handleChangeStats}
-                      >
-                        <MenuItem value="">
-                          <em>None</em>
-                        </MenuItem>
-                        <MenuItem value={1}>100</MenuItem>
-                        <MenuItem value={2}>200</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <Typography>200</Typography>
-                    <DeleteIcon sx={{ ml: 2, color: "red" }} />
+            <Grid item container rowSpacing={1} pb={1}>
+              {stastBonus.map((stats, index) => (
+                <Grid
+                  item
+                  container
+                  xs={12}
+                  display="flex"
+                  alignItems="flex-end"
+                  justifyContent="flex-end"
+                  columnSpacing={1}
+                  key={index}
+                >
+                  <Grid item xs={5}>
+                    <CustomTextField
+                      variant="filled"
+                      label="Name"
+                      fullWidth
+                      defaultValue={`${stats.title} ${index}`}
+                    />
                   </Grid>
-                ))}
+                  <Grid item xs={3}>
+                    <CustomTextField
+                      variant="filled"
+                      label="Type"
+                      fullWidth
+                      select
+                      defaultValue={stats.name[0]}
+                    >
+                      {stats.name.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </CustomTextField>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <CustomTextField
+                      variant="filled"
+                      type="number"
+                      fullWidth
+                      defaultValue={stats.values}
+                    />
+                  </Grid>
+                  <Grid item xs={1}>
+                    <StyledDeleteIcon
+                      sx={{ color: "red" }}
+                      onClick={() => handleDelete(index)}
+                    />
+                  </Grid>
+                </Grid>
+              ))}
             </Grid>
             <Grid item xs={12} sm={12} md={12} textAlign="center">
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleChange}
+                onClick={handleAddStatsChange}
                 sx={{ width: "100%" }}
               >
                 Add Stats

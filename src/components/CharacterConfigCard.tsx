@@ -10,22 +10,28 @@ function CharacterConfigCard({
 }) {
   return (
     <Grid
-      container
+      // container
       item
-      rowSpacing={1}
-      justifyContent="center"
+      // rowSpacing={1}
+      // justifyContent="flex-start"
+      display="flex"
+      flexDirection="column"
       sx={{
         backgroundColor: "rgba(0, 0, 0, 0.2)",
         padding: "8px",
+        width: "100%",
+        // flexGrow: 1,
       }}
     >
-      <Grid item xs={12}>
+      <Grid>
         <Typography sx={{ fontWeight: "bold" }}>{title}</Typography>
       </Grid>
-      <Grid item xs={12}>
+      <Grid pb={1}>
         <Divider />
       </Grid>
-      {children}
+      <Grid container>
+        {children}
+      </Grid>
     </Grid>
   );
 }
