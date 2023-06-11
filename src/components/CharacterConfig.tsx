@@ -180,7 +180,7 @@ export default function CharacterConfig() {
   let finalStats = [
     ["ATK", 0, "+"],
     ["EM", 0, "+"],
-    ["HP", 0, "+"],
+    ["HP", 40000, "+"],
     ["DEF", 0, "+"],
     ["CRIT", 0, "%"],
     ["CRIT DMG", 0, "%"],
@@ -226,7 +226,7 @@ export default function CharacterConfig() {
   ];
 
   const initialStats = {
-    title: "Title",
+    title: "Blizzard Strayer",
     name: [
       "ATK%",
       "ATK",
@@ -242,7 +242,7 @@ export default function CharacterConfig() {
       "CRIT RATE",
       "HEALING",
     ],
-    values: "0",
+    values: "40000",
   };
   const [stastBonus, setStatsBonus] = useState<
     { title: string; name: string[]; values: string }[]
@@ -272,9 +272,9 @@ export default function CharacterConfig() {
     <>
       <Grid container columnSpacing={1} rowSpacing={2} maxWidth="xl">
         {/*---------------------Character------------------------------ */}
-        <Grid item xs={12} sm={12} md={6}>
+        <Grid container item xs={12} sm={12} md={12} lg={6}>
           <CharacterConfigCard title="Character">
-            <Grid item xs={12} sm={3} md={12} lg={3}>
+            <Grid item xs={12} sm={3} md={3} lg={3}>
               <Grid item>
                 <Card>
                   <CardMedia
@@ -306,7 +306,7 @@ export default function CharacterConfig() {
                 </Suspense>
               </Grid>
             </Grid>
-            <Grid item xs={12} sm={9} md={12} lg={9} container>
+            <Grid container item xs={12} sm={9} md={9} lg={9} pt={1}>
               <Grid item container xs={6} rowSpacing={1}>
                 {characterConfigs.map((item, index) => (
                   <Grid
@@ -377,9 +377,9 @@ export default function CharacterConfig() {
         </Grid>
 
         {/*---------------------Weapon------------------------------ */}
-        <Grid item xs={12} sm={6} md={6}>
+        <Grid container item xs={12} sm={12} md={12} lg={6}>
           <CharacterConfigCard title="Weapon">
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} sm={3} md={3} lg={3}>
               <Grid item>
                 <Card sx={{ maxWidth: "100%", maxHeight: "100%" }}>
                   <CardMedia
@@ -411,10 +411,7 @@ export default function CharacterConfig() {
                 </Suspense>
               </Grid>
             </Grid>
-            <Grid
-              item
-              md={9}
-              container
+            <Grid container item xs={12} sm={9} md={9} lg={9} pt={1}
               justifyContent="flex-end"
               rowSpacing={1}
             >
@@ -451,18 +448,20 @@ export default function CharacterConfig() {
         </Grid>
 
         {/*---------------------Artifact Set------------------------------ */}
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid container item xs={12} sm={12} md={12} lg={5}>
           <CharacterConfigCard title="Artifact Set">
-            <Grid item container xs={12} rowSpacing={1} columnSpacing={1}>
+            <Grid container item xs={12} pb={1}
+              rowSpacing={1}
+              columnSpacing={1}
+            >
               {artifactSets.map((artifactSet, index) => (
-                <Grid item container sm={12} md={6} key={index}>
-                  <Grid
-                    container
+                <Grid container item sm={6} md={4} lg={6} key={index}>
+                  <Grid container item
                     alignItems="center"
                     justifyContent="center"
                     sx={{ backgroundColor: "#f5f5f5" }}
                   >
-                    <Grid item xs={4} md={12} lg={4} p={1} key={index}>
+                    <Grid item xs={4} md={4} lg={4} p={1} key={index}>
                       <Card sx={{ maxWidth: "100%", maxHeight: "100%" }}>
                         <CardMedia
                           component="img"
@@ -472,7 +471,7 @@ export default function CharacterConfig() {
                       </Card>
                     </Grid>
 
-                    <Grid item container xs={8} md={12} lg={8}>
+                    <Grid item container xs={8} md={8} lg={8}>
                       <Grid item xs={12} pl={1}>
                         <Typography> {artifactSet.name} </Typography>
                       </Grid>
@@ -518,9 +517,6 @@ export default function CharacterConfig() {
               ))}
             </Grid>
 
-            <Grid item xs={12}>
-              <Divider />
-            </Grid>
             <Grid item md={12} textAlign="center">
               <Button
                 disabled={artifactSets.length >= 3}
@@ -544,11 +540,64 @@ export default function CharacterConfig() {
               </Suspense>
             </Grid>
           </CharacterConfigCard>
-          {/* ))} */}
+        </Grid>
+
+        {/*---------------------Artifact Main Stats------------------------------ */}
+        <Grid container item xs={12} sm={6} md={6} lg={4}>
+          <CharacterConfigCard title="Artifact Main Stats">
+            <Grid item md={12} container rowSpacing={1}>
+              {artifactMainStats.map((stats, index) => (
+                <Grid
+                  item
+                  container
+                  xs={12}
+                  display="flex"
+                  alignItems="flex-end"
+                  justifyContent="flex-end"
+                  key={index}
+                >
+                  <Grid item xs={4}>
+                    <RowName>{stats.name}</RowName>
+                  </Grid>
+                  <Grid item xs={8}>
+                    <CustomTextField
+                      variant="filled"
+                      fullWidth
+                      select
+                      defaultValue={stats.values[0]}
+                      sx={{ pl: 2 }}
+                    >
+                      {stats.values.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </CustomTextField>
+                  </Grid>
+                  {/* <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                    <InputLabel id="small-label">stats</InputLabel>
+                    <Select
+                      labelId="small-label"
+                      id="select-small"
+                      value={stats}
+                      label="Age"
+                      onChange={handleChangeStats}
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem>
+                      <MenuItem value={10}>HP</MenuItem>
+                      <MenuItem value={20}>HP%</MenuItem>
+                    </Select>
+                  </FormControl> */}
+                </Grid>
+              ))}
+            </Grid>
+          </CharacterConfigCard>
         </Grid>
 
         {/*---------------------Talents------------------------------ */}
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid container item xs={12} sm={6} md={6} lg={3}>
           <CharacterConfigCard title="Talents">
             <Grid
               item
@@ -592,62 +641,8 @@ export default function CharacterConfig() {
           </CharacterConfigCard>
         </Grid>
 
-        {/*---------------------Artifact Main Stats------------------------------ */}
-        <Grid item xs={12} sm={6} md={4}>
-          <CharacterConfigCard title="Artifact Main Stats">
-            <Grid item md={12} container rowSpacing={1}>
-              {artifactMainStats.map((stats, index) => (
-                <Grid
-                  item
-                  container
-                  xs={12}
-                  display="flex"
-                  alignItems="flex-end"
-                  justifyContent="flex-end"
-                  key={index}
-                >
-                  <Grid item xs={6}>
-                    <RowName>{stats.name}</RowName>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <CustomTextField
-                      variant="filled"
-                      fullWidth
-                      select
-                      defaultValue={stats.values[0]}
-                      sx={{ pl: 2 }}
-                    >
-                      {stats.values.map((option) => (
-                        <MenuItem key={option} value={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
-                    </CustomTextField>
-                  </Grid>
-                  {/* <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                    <InputLabel id="small-label">stats</InputLabel>
-                    <Select
-                      labelId="small-label"
-                      id="select-small"
-                      value={stats}
-                      label="Age"
-                      onChange={handleChangeStats}
-                    >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
-                      <MenuItem value={10}>HP</MenuItem>
-                      <MenuItem value={20}>HP%</MenuItem>
-                    </Select>
-                  </FormControl> */}
-                </Grid>
-              ))}
-            </Grid>
-          </CharacterConfigCard>
-        </Grid>
-
         {/*---------------------Substats------------------------------ */}
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid container item xs={12} sm={6} md={6} lg={3}>
           <CharacterConfigCard title="Sub stats">
             <Grid item container rowSpacing={1}>
               {substats.map((item, index) => (
@@ -698,7 +693,7 @@ export default function CharacterConfig() {
         </Grid>
 
         {/*---------------------Final Character Stats------------------------------ */}
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid container item xs={12} sm={6} md={6} lg={3}>
           <CharacterConfigCard title="Final Character Stats">
             <Grid item container rowSpacing={1}>
               {finalStats.map((item, index) => (
@@ -754,9 +749,9 @@ export default function CharacterConfig() {
         </Grid>
 
         {/*---------------------Stats Bonus------------------------------ */}
-        <Grid item xs={12} md={4}>
+        <Grid container item xs={12} md={12} lg={6}>
           <CharacterConfigCard title="Stats Bonus">
-            <Grid item container rowSpacing={1}>
+            <Grid item container rowSpacing={1} pb={1}>
               {stastBonus.map((stats, index) => (
                 <Grid
                   item
@@ -774,7 +769,6 @@ export default function CharacterConfig() {
                       label="Name"
                       fullWidth
                       defaultValue={`${stats.title} ${index}`}
-                      // sx={{ pr: 2 }}
                     />
                   </Grid>
                   <Grid item xs={3}>
@@ -784,7 +778,6 @@ export default function CharacterConfig() {
                       fullWidth
                       select
                       defaultValue={stats.name[0]}
-                      // sx={{ pr: 2 }}
                     >
                       {stats.name.map((option) => (
                         <MenuItem key={option} value={option}>
@@ -799,15 +792,11 @@ export default function CharacterConfig() {
                       type="number"
                       fullWidth
                       defaultValue={stats.values}
-                      // sx={{ pr: 2 }}
                     />
                   </Grid>
                   <Grid item xs={1}>
                     <StyledDeleteIcon
-                      sx={{
-                        color: "red",
-                        // ml: 2,
-                      }}
+                      sx={{ color: "red" }}
                       onClick={() => handleDelete(index)}
                     />
                   </Grid>
