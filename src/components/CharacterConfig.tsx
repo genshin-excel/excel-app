@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Suspense } from "react";
+import React, { useState, Suspense } from "react";
 import {
   Grid,
   Card,
@@ -7,15 +7,10 @@ import {
   TextField,
   Button,
   Checkbox,
-  FormControl,
-  InputLabel,
   MenuItem,
-  Select,
-  SelectChangeEvent,
   Divider,
   InputAdornment,
   styled,
-  Autocomplete,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import WeaponPopup from "./WeponPopUp";
@@ -72,21 +67,18 @@ export default function CharacterConfig() {
     max: Number(item[3]),
   }));
 
-  // const weaponConfigs = ["Refine", "Ascens", "Level"];
-  const setUp = ["Attack", "Skill", "Burst"];
-
   const [checked, setChecked] = useState(true);
-  const [showStats, setShowStats] = useState(false);
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  // const [showStats, setShowStats] = useState(false);
+  // const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   // const [valuesChar, setValuesChar] = useState(
   //   Array(characterConfigs.length).fill(0)
   // );
-  const [valuesWeapon, setValuesWeapon] = useState(
-    Array(weaponConfigs.length).fill(0)
-  );
+  // const [valuesWeapon, setValuesWeapon] = useState(
+  //   Array(weaponConfigs.length).fill(0)
+  // );
   const [values, setValues] = useState(Array(weaponConfigs.length).fill(0));
-  const [stats, setStats] = React.useState("");
-  const [number, setNumber] = useState(0);
+  // const [stats, setStats] = React.useState("");
+  // const [number, setNumber] = useState(0);
   const [openChar, setOpenChar] = useState(false);
   const [openWeapon, setOpenWeapon] = useState(false);
   const [openArtifact, setOpenArtifact] = useState(false);
@@ -128,14 +120,14 @@ export default function CharacterConfig() {
   //   setValuesChar(newValues);
   // };
 
-  const handleChangeWeapon = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    const newValues = [...valuesWeapon];
-    newValues[index] = Number(event.target.value);
-    setValuesWeapon(newValues);
-  };
+  // const handleChangeWeapon = (
+  //   event: React.ChangeEvent<HTMLInputElement>,
+  //   index: number
+  // ) => {
+  //   const newValues = [...valuesWeapon];
+  //   newValues[index] = Number(event.target.value);
+  //   setValuesWeapon(newValues);
+  // };
 
   const handleChangeSetUp = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -150,21 +142,9 @@ export default function CharacterConfig() {
     setChecked(event.target.checked);
   };
 
-  const handleChange = () => {
-    setNumber(number + 1);
-    setShowStats(true);
-  };
-
-  const scrollToBottom = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop =
-        scrollContainerRef.current.scrollHeight;
-    }
-  };
-
-  const handleChangeStats = (event: SelectChangeEvent) => {
-    setStats(event.target.value);
-  };
+  // const handleChangeStats = (event: SelectChangeEvent) => {
+  //   setStats(event.target.value);
+  // };
 
   let substats = [
     ["HP%", 0.198, "%"],
@@ -229,6 +209,29 @@ export default function CharacterConfig() {
       ],
     },
   ];
+
+  const initialStats = { title: 'Title', name: ['ATK%', 'ATK', 'HP%', 'HP', 'DEF%', 'DEF', 'EM', 'ER', 'ELE DMG', 'PHY DMG', 'CRIT DMG', 'CRIT RATE', 'HEALING'], values: '0' };
+  const [stastBonus, setStatsBonus] = useState<{ title: string; name: string[]; values: string }[]>([initialStats]);
+
+  const handleAddStatsChange = () => {
+    setStatsBonus((prevStats) => [...prevStats, { ...initialStats }]);
+  };
+
+  const handleDelete = (index: number) => {
+    setStatsBonus((prevStats) => {
+      const updatedStats = [...prevStats];
+      updatedStats.splice(index, 1);
+      return updatedStats;
+    });
+  };
+
+  const handleDeleteArtifactSet = (index: number) => {
+    setArtifactSets((prevSets) => {
+      const updatedSets = [...prevSets];
+      updatedSets.splice(index, 1);
+      return updatedSets;
+    });
+  };
 
   return (
     <>
@@ -382,7 +385,6 @@ export default function CharacterConfig() {
 
         {/*---------------------Artifact Set------------------------------ */}
         <Grid item xs={12} sm={6} md={4}>
-          {/* {artifactImages.map((artifactImage, index) => ( */}
           <CharacterConfigCard title="Artifact Set">
             <Grid item container xs={12} rowSpacing={1} columnSpacing={1}>
               {artifactSets.map((artifactSet, index) => (
@@ -439,9 +441,8 @@ export default function CharacterConfig() {
                       </Grid>
                       <Grid item display="flex" alignItems="center" xs={2}>
                         <DeleteIcon
-                          sx={{
-                            color: "red",
-                          }}
+                          sx={{ color: "red" }}
+                          onClick={() => handleDeleteArtifactSet(index)}
                         />
                       </Grid>
                     </Grid>
@@ -547,14 +548,7 @@ export default function CharacterConfig() {
                       fullWidth
                       select
                       defaultValue={stats.values[0]}
-                      sx={{
-                        pl: 2,
-                        // textAlign: 'center',
-                        // '& .MuiInputBase-input': {
-                        //   textAlign: 'center',
-                        //   pandingBottom:'32px'
-                        // },
-                      }}
+                      sx={{ pl: 2 }}
                     >
                       {stats.values.map((option) => (
                         <MenuItem key={option} value={option}>
@@ -696,46 +690,57 @@ export default function CharacterConfig() {
         <Grid item xs={12} md={4}>
           <CharacterConfigCard title="Stats Bonus">
             <Grid item container rowSpacing={1}>
-              {showStats &&
-                Array.from({ length: number }).map((_, index) => (
-                  <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={12}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    p={2}
-                    key={index}
-                  >
-                    <RowName>Title</RowName>
-                    <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-                      <InputLabel id="demo-select-small-label">ATK</InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        label="ATK"
-                        onChange={handleChangeStats}
-                      >
-                        <MenuItem value="">
-                          <em>None</em>
-                        </MenuItem>
-                        <MenuItem value={1}>100</MenuItem>
-                        <MenuItem value={2}>200</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <Typography>200</Typography>
-                    <DeleteIcon sx={{ ml: 2, color: "red" }} />
+              {stastBonus.map((stats, index) => (
+                <Grid
+                  item
+                  xs={12}
+                  display="flex"
+                  alignItems="flex-end"
+                  justifyContent="flex-end"
+                  p={2}
+                  key={index}
+                >
+                  <Grid item xs={2}>
+                    <RowName>{`${stats.title} ${index}`}</RowName>
                   </Grid>
-                ))}
+                  <Grid item xs={4}>
+                    <CustomTextField
+                      variant="filled"
+                      fullWidth
+                      select
+                      defaultValue={stats.name[0]}
+                      sx={{ pl: 2 }}
+                    >
+                      {stats.name.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </CustomTextField>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <CustomTextField
+                      variant="filled"
+                      fullWidth
+                      defaultValue={stats.values}
+                      sx={{ pl: 2 }}
+                    />
+                  </Grid>
+                  <Grid item xs={2}>
+                    <DeleteIcon
+                      sx={{ color: 'red', ml: 2 }}
+                      onClick={() => handleDelete(index)}
+                    />
+                  </Grid>
+                </Grid>
+              ))}
             </Grid>
             <Grid item xs={12} sm={12} md={12} textAlign="center">
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleChange}
-                sx={{ width: "100%" }}
+                onClick={handleAddStatsChange}
+                sx={{ width: '100%' }}
               >
                 Add Stats
               </Button>
