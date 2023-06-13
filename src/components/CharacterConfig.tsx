@@ -8,7 +8,6 @@ import {
   Button,
   Checkbox,
   MenuItem,
-  Divider,
   InputAdornment,
   styled,
 } from "@mui/material";
@@ -20,6 +19,7 @@ import { Weapon } from "../models/Weapon";
 import { Artifact } from "../models/Artifacts";
 import ArtifactPopup from "./ArtifactsPopUp";
 import CharacterConfigCard from "./CharacterConfigCard";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const CustomTextField = styled(TextField)`
   & .MuiFilledInput-root {
@@ -74,7 +74,17 @@ export default function CharacterConfig() {
   let weaponConfigs = [
     ["Refinement", 0, 1, 5],
     ["Ascension", 0, 0, 6],
-    ["Level", 0, 1, 90],
+    // ["Level", 0, 1, 90],
+  ].map((item) => ({
+    name: String(item[0]),
+    value: Number(item[1]),
+    min: Number(item[2]),
+    max: Number(item[3]),
+  }));
+
+  let weaponLvConfigs = [
+    ["Level", 1, 1, 90],
+    ["Base Atk", 0, 0, 0],
   ].map((item) => ({
     name: String(item[0]),
     value: Number(item[1]),
@@ -97,6 +107,10 @@ export default function CharacterConfig() {
   const [openChar, setOpenChar] = useState(false);
   const [openWeapon, setOpenWeapon] = useState(false);
   const [openArtifact, setOpenArtifact] = useState(false);
+
+  const handleBackClick = () => {
+    window.history.back();
+  };
 
   const [character, setCharacter] = useState<Character>({
     id: "",
@@ -162,20 +176,21 @@ export default function CharacterConfig() {
   // };
 
   let substats = [
-    ["HP%", 0.198, "%"],
-    ["HP", 299, "+"],
-    ["ATK%", 0.2777, "%"],
-    ["ATK", 38, "+"],
-    ["DEF%", 0.365, "%"],
-    ["DEF", 80, "+"],
-    ["EM", 187, "+"],
-    ["ER", 0.456, "%"],
-    ["CR", 0.311, "%"],
-    ["CD", 0.622, "%"],
+    ["HP%", 0.198, "%", 0],
+    ["HP", 299, "+", 0],
+    ["ATK%", 0.2777, "%", 0],
+    ["ATK", 38, "+", 0],
+    ["DEF%", 0.365, "%", 0],
+    ["DEF", 80, "+", 0],
+    ["EM", 187, "+", 0],
+    ["ER", 0.456, "%", 0],
+    ["CR", 0.311, "%", 0],
+    ["CD", 0.622, "%", 0],
   ].map((item) => ({
     name: String(item[0]),
     value: Number(item[1]),
     type: String(item[2]),
+    count: Number(item[3])
   }));
   let finalStats = [
     ["ATK", 0, "+"],
@@ -271,6 +286,12 @@ export default function CharacterConfig() {
   return (
     <>
       <Grid container columnSpacing={1} rowSpacing={2} maxWidth="xl">
+        <Grid container item xs={12}>
+          <Button startIcon={<ArrowBackIcon />} variant="contained" onClick={handleBackClick}>
+            Back to Team
+          </Button>
+        </Grid>
+
         {/*---------------------Character------------------------------ */}
         <Grid container item xs={12} sm={12} md={12} lg={6}>
           <CharacterConfigCard title="Character">
@@ -366,7 +387,7 @@ export default function CharacterConfig() {
                           readOnly: true,
                           tabIndex: -1,
                         }}
-                        // sx={{ pl: 2 }}
+                      // sx={{ pl: 2 }}
                       />
                     </Grid>
                   </Grid>
@@ -416,6 +437,7 @@ export default function CharacterConfig() {
               rowSpacing={1}
             >
               {weaponConfigs.map((item, index) => (
+
                 <Grid
                   key={index}
                   item
@@ -443,6 +465,50 @@ export default function CharacterConfig() {
                   </Grid>
                 </Grid>
               ))}
+
+              {/* {weaponLvConfigs.map((item, index) => ( */}
+              <Grid
+                // key={index}
+                item
+                display="flex"
+                alignItems="flex-end"
+                pl={2}
+                xs={12}
+              >
+                <Grid item xs={6}>
+                  <RowName>{weaponLvConfigs[0].name}</RowName>
+                </Grid>
+                <Grid item xs={2.5}>
+                  <CustomTextField
+                    fullWidth
+                    variant="filled"
+                    type="number"
+                    defaultValue={weaponLvConfigs[0].value}
+                    inputProps={{
+                      min: weaponLvConfigs[0].min,
+                      max: weaponLvConfigs[0].max,
+                      step: 1,
+                    }}
+                    sx={{ pl: 2 }}
+                  />
+                </Grid>
+                <Grid item xs={3.5}>
+                  <CustomTextField
+                    variant="filled"
+                    label={weaponLvConfigs[1].name}
+                    fullWidth
+                    defaultValue={weaponLvConfigs[1].value}
+                    sx={{
+                      pl: 1,
+                      '& .MuiInputLabel-root': {
+                        pl: 1,
+                      },
+                    }}
+                  />
+                </Grid>
+              </Grid>
+              {/* ))} */}
+
             </Grid>
           </CharacterConfigCard>
         </Grid>
@@ -517,13 +583,14 @@ export default function CharacterConfig() {
               ))}
             </Grid>
 
-            <Grid item md={12} textAlign="center">
+            <Grid item xs={12} textAlign="center">
               <Button
+                fullWidth
                 disabled={artifactSets.length >= 3}
                 variant="contained"
                 color="primary"
                 onClick={() => setOpenArtifact(true)}
-                sx={{ width: "100%" }}
+              // sx={{ width: "100%" }}
               >
                 Add New Set
               </Button>
@@ -644,49 +711,71 @@ export default function CharacterConfig() {
         {/*---------------------Substats------------------------------ */}
         <Grid container item xs={12} sm={6} md={6} lg={3}>
           <CharacterConfigCard title="Sub stats">
-            <Grid item container rowSpacing={1}>
+            <Grid container minWidth="100%" rowSpacing={1}>
               {substats.map((item, index) => (
-                <Grid
-                  item
-                  container
-                  xs={12}
-                  display="flex"
-                  alignItems="flex-end"
-                  justifyContent="flex-end"
-                  key={index}
-                  pl={2}
-                >
-                  <Grid item xs={6}>
-                    <RowName>{item.name}</RowName>
+                <>
+                  <Grid item container xs={8} >
+                    <Grid
+                      item
+                      container
+                      xs={12}
+                      display="flex"
+                      alignItems="flex-end"
+                      justifyContent="flex-end"
+                      key={index}
+                      pl={2}
+                    >
+                      <Grid item xs={3}>
+                        <RowName>{item.name}</RowName>
+                      </Grid>
+                      <Grid item xs={9}>
+                        {item.type === "%" && (
+                          <CustomTextField
+                            fullWidth
+                            variant="filled"
+                            id="outlined-basic"
+                            type="number"
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">%</InputAdornment>
+                              ),
+                            }}
+                            defaultValue={(item.value * 100).toFixed(2)}
+                            sx={{ pl: 2 }} />
+                        )}
+                        {item.type === "+" && (
+                          <CustomTextField
+                            variant="filled"
+                            fullWidth
+                            id="outlined-basic"
+                            defaultValue={item.value.toFixed(2)}
+                            type="number"
+                            sx={{ pl: 2 }} />
+                        )}
+                      </Grid>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6}>
-                    {item.type === "%" && (
-                      <CustomTextField
-                        fullWidth
-                        variant="filled"
-                        id="outlined-basic"
-                        type="number"
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">%</InputAdornment>
-                          ),
-                        }}
-                        defaultValue={(item.value * 100).toFixed(2)}
-                        sx={{ pl: 2 }}
-                      />
-                    )}
-                    {item.type === "+" && (
-                      <CustomTextField
-                        variant="filled"
-                        fullWidth
-                        id="outlined-basic"
-                        defaultValue={item.value.toFixed(2)}
-                        type="number"
-                        sx={{ pl: 2 }}
-                      />
-                    )}
+                  <Grid item container xs={4} rowSpacing={1}>
+                    <Grid
+                      item
+                      container
+                      xs={12}
+                      display="flex"
+                      alignItems="flex-end"
+                      justifyContent="flex-end"
+                      key={index}
+                      pl={2}
+                    >
+                      <Grid item xs={12}>
+                        <CustomTextField
+                          variant="filled"
+                          label="Roll Count"
+                          fullWidth
+                          defaultValue={item.count} />
+                      </Grid>
+                    </Grid>
                   </Grid>
-                </Grid>
+                </>
               ))}
             </Grid>
           </CharacterConfigCard>
