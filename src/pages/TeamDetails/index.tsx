@@ -15,6 +15,7 @@ import DropDownSkills from "../../components/DropDownSkills";
 import TabsTitle from "../../components/TabsTitle";
 import TabsContent from "../../components/TabsContent";
 import TableTabs from "../../components/TableTabs";
+import BuildIcon from '@mui/icons-material/Build';
 // import DialogEq from "../../components/DialogEq";
 
 function TeamDetails({ teamValue }: { teamValue: Team }) {
@@ -143,13 +144,28 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
               >
                 <TableTabs />
               </Grid>
-              <Grid item md={6}>
-                <Button variant="outlined" component={Link} to={"/characterConfig"}>
-                  Char Details
-                </Button>
-                {/* {openCharConfig && (
-                  <DialogEq open={true} handleClose={() => setOpenCharConfig(false)} />
-                )} */}
+              <Grid
+                item
+                container
+                md={6}
+                display="flex"
+                columnSpacing={2}
+                mt={1}
+              >
+                {/* <Grid item md={3}> */}
+                {[0, 1, 2, 3].map((value) => (
+                  <Grid item md={3} key={value}>
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      startIcon={<BuildIcon/>}
+                      component={Link}
+                      to={`${value+1}`}
+                    >
+                      Config
+                    </Button>
+                  </Grid>
+                ))}
               </Grid>
               <Grid
                 item
