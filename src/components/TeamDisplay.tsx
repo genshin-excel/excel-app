@@ -7,6 +7,7 @@ import { Delete, Edit } from '@mui/icons-material';
 import EditTextField from './EditTextField';
 import { Alert, ErrorName } from './Alert';
 import { DBContext } from '../database/Database';
+import ClickableCard from '../style/ClickableCard';
 
 
 const CharacterPopup = lazy(() => import('./CharacterPopUp'))
@@ -90,9 +91,9 @@ function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: (
             <Grid container spacing={2} sx={{ alignItems: 'center', justifyContent: 'flex-start' }}>
                 {[0, 1, 2, 3].map((index) => (
                     <Grid item xs={3} key={index}>
-                        <Card>
+                        <ClickableCard>
                             <CardMedia component="img" image={team.characters[index]?.thumbnail || process.env.PUBLIC_URL + '/images/characters/add_new_4.png'} alt="team member" onClick={() => setOpenDialog({ team: team, charIndex: index })} />
-                        </Card>
+                        </ClickableCard>
                         {openDialog.team === team && openDialog.charIndex === index && (
                             <Suspense fallback={null}>
                                 <CharacterPopup onClose={() => setOpenDialog(nullTeam)} onSelectImage={(pickedChar: Character) => setSelectedImage(pickedChar, team, index)} oldChar={team.characters[index]} />

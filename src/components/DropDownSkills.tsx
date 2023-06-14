@@ -41,7 +41,7 @@ function DropDownSkills({ lineCount }: { lineCount: number }) {
   return (
     <>
     {Array.from({ length: lineCount }).map((_, index) => (
-      <Grid container marginBottom="16px">
+      <Grid container marginBottom="16px" key={index}>
       {lines.map((line, lineIndex) => (
         <Grid item container xs={12} key={lineIndex} spacing={2}>
           {skills.map(({ id, options }) => (
