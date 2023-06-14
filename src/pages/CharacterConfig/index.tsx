@@ -129,16 +129,17 @@ export default function CharacterConfigFilter() {
   const { teamIndex, charIndex } = useParams();
   const database = useContext(DBContext);
 
-  if (!teamIndex) {
+  if (!teamIndex || Number.isNaN(teamIndex)) {
     return <Navigate to="../" />;
   }
-  var team = database.getTeamDAO().getTeamByName(teamIndex);
+  var team = database.getTeamDAO().getTeamById(Number(teamIndex));
   if (!team) {
     return <Navigate to="../" />;
   }
   if(!charIndex || ["1", "2", "3", "4"].indexOf(charIndex) < 0 ) {
     return <Navigate to="../" />;
   }
+  var character = database.getTeamDAO().getCharacter(team.id, Number(charIndex));
 
   return (
     <Suspense fallback={<div>Loading...</div>}>

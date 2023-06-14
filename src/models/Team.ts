@@ -3,25 +3,17 @@ import { Weapon } from './Weapon';
 import { Artifact } from './Artifacts';
 
 export type Team = {
+    id: number;
     name: string;
-    characters: (Character | null)[]
+    characterKeys: String[]
     dps: number;
     dpr: number;
 }
 
 export const emptyTeam: Team = {
+    id: 0,
     name: "",
-    characters: [null, null, null, null],
+    characterKeys: ["", "", "", ""],
     dps: 0,
     dpr: 0
-}
-
-export type Weapons = {
-    name: string;
-    weapon: (Weapon | null)[]
-}
-
-export type Artifacts = {
-    name: string;
-    weapon: (Artifact | null)[]
 }

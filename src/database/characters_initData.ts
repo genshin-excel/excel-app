@@ -1,9 +1,9 @@
-import { Character } from '../models/Character';
+import { CharacterType } from '../models/CharacterType';
 import charactersData from '../data/characters.json';
 
-export const charactersMap = new Map<string, Character>();
+export const charactersMap = new Map<string, CharacterType>();
 
-function addCharacter(character: Character) {
+function addCharacter(character: CharacterType) {
     charactersMap.set(character.id, character);
 }
 

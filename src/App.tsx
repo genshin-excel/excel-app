@@ -26,7 +26,7 @@ function Content() {
                         <BrowserRouter basename="/">
                             <Routes>
                                 <Route index element={<Body />} />
-                                <Route path="/TeamPage/*">
+                                <Route path="/Team/*">
                                     <Route path=":teamIndex/*">
                                         <Route index element={<TeamPage />} />
                                         <Route path=":charIndex" element={<CharacterConfig />} />

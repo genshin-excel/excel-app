@@ -206,10 +206,10 @@ function TeamPage() {
   const { teamIndex } = useParams();
   const database = useContext(DBContext);
 
-  if (!teamIndex) {
+  if (!teamIndex || Number.isNaN(teamIndex)) {
     return <Navigate to="/" />;
   }
-  var team = database.getTeamDAO().getTeamByName(teamIndex);
+  var team = database.getTeamDAO().getTeamById(Number(teamIndex));
   if (!team) {
     return <Navigate to="/" />;
   }

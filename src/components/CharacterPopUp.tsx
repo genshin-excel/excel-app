@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Grid, Card, CardMedia, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
 import { charactersMap } from '../database/characters_initData';
-import { Character } from '../models/Character';
+import { CharacterType } from '../models/CharacterType';
 import { Team } from '../models/Team';
 import SearchField from './SearchField';
 
@@ -11,8 +11,8 @@ export type PickCharacterProps = {
 };
 type Props = {
     onClose: () => void;
-    onSelectImage: (pickedChar: Character) => void;
-    oldChar: Character | null;
+    onSelectImage: (pickedChar: CharacterType) => void;
+    oldChar: CharacterType | null;
 };
 
 const CharacterPopup: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) => {
@@ -31,7 +31,7 @@ const CharacterPopup: React.FC<Props> = ({ onClose, onSelectImage, oldChar }) =>
         }
     }, [searchValue]);
 
-    const handleImageClick = (character: Character) => {
+    const handleImageClick = (character: CharacterType) => {
         if (character.id !== oldChar?.id) {
             onSelectImage(character);
         }

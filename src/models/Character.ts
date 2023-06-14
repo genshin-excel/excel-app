@@ -1,5 +1,7 @@
+import { CharacterType } from "./CharacterType";
+
 export type Character = {
-    id: string;
-    name: string;
-    thumbnail: string;
+    teamId: number;
+    index: number;
+    characterType: CharacterType
 }

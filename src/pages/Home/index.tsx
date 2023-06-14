@@ -16,7 +16,7 @@ function Body() {
     const newTeam = {
       id: newTeamId,
       name: `Team ${newTeamId}`,
-      characters: [null, null, null, null],
+      characterKeys: [],
       dps: 0,
       dpr: 0,
     };
@@ -118,7 +118,7 @@ const TeamCard: React.FC<TeamCardProps> = React.memo(
             sx={{ mb: 2 }}
             key="button"
           >
-            <Link to={`/TeamPage/${team.name}`}>
+            <Link to={`/Team/${team.id}`}>
               <Button
                 variant="contained"
                 color="primary"
