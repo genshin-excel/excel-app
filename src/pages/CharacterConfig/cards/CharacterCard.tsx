@@ -1,57 +1,62 @@
 import CharacterConfigCard from "../../../components/CharacterConfigCard";
-import React, { useState, Suspense } from "react";
-import { Grid, Card, CardMedia, Button } from "@mui/material";
+import React, {
+  useState,
+  Suspense,
+  useMemo,
+  useEffect,
+  useContext,
+} from "react";
+import { Grid, Card, CardMedia, Button, MenuItem } from "@mui/material";
 import CharacterPopup from "../../../components/CharacterPopUp";
 import { Character } from "../../../models/Character";
 import { RowName } from "..";
 import { CustomTextField } from "..";
+import { forEach, set } from "lodash";
+import { Team } from "../../../models/Team";
+import { DBContext } from "../../../database/Database";
+
+type CharacterConfigs = {
+  name: string;
+  value: number;
+  min: number;
+  max: number;
+};
 
 const CharacterCard = React.memo(
   ({
     character,
     setCharacter,
+    charIndex,
+    team,
   }: {
     character: Character | null;
     setCharacter: (value: React.SetStateAction<Character | null>) => void;
+    charIndex: number;
+    team: Team;
   }) => {
     console.log("CharacterCard");
+    const database = useContext(DBContext);
     const [openChar, setOpenChar] = useState(false);
-    const [characterConfigs, setCharacterConfigs] = useState([
-      ["Ascension", 0, 0, 6],
-      ["Level", 1, 1, 90],
-      ["Constellation", 0, 0, 6],
-    ].map((item) => ({
-      name: String(item[0]),
-      value: Number(item[1]),
-      min: Number(item[2]),
-      max: Number(item[3]),
-    })));
+    const [characterConfigs, setCharacterConfigs] = useState<
+      CharacterConfigs[]
+    >(
+      [
+        ["Ascension", 0, 0, 6],
+        ["Level", 1, 1, 90],
+        ["Constellation", 0, 0, 6],
+      ].map((item) => ({
+        name: String(item[0]),
+        value: Number(item[1]),
+        min: Number(item[2]),
+        max: Number(item[3]),
+      }))
+    );
 
-    const handleLevelChange = (newValue: number) => {
-      let updatedAscension = characterConfigs.find((item) => item.name === "Ascension")!.value;
-      if (newValue < 20) {
-        updatedAscension = 0;
-      } else if (newValue >= 20 && newValue < 40) {
-        updatedAscension = 1;
-      } else if (newValue >= 40 && newValue < 50) {
-        updatedAscension = 2;
-      } else if (newValue >= 50 && newValue < 60) {
-        updatedAscension = 3;
-      } else if (newValue >= 60 && newValue < 70) {
-        updatedAscension = 4;
-      } else if (newValue >= 70 && newValue < 80) {
-        updatedAscension = 5;
-      } else if (newValue >= 80 && newValue <= 90) {
-        updatedAscension = 6;
-      }
-
-      const updatedCharacterConfigs = characterConfigs.map((item) =>
-        item.name === "Ascension" ? { ...item, value: updatedAscension } : item
-      );
-
-      setCharacterConfigs(updatedCharacterConfigs);
-    };
-
+    const charLevelBreakpointData = [0, 20, 40, 50, 60, 70, 80, 90];
+    const ascensionBreakpointData = [0, 1, 2, 3, 4, 5, 6];
+    const [ascensionAvailableValues, setAscensionAvailableValues] = useState([
+      0,
+    ]);
 
     let characterBaseStats = [
       ["Base HP", 14352],
@@ -62,8 +67,65 @@ const CharacterCard = React.memo(
       value: Number(item[1]),
     }));
 
+    const handleLevelChange = (level: number) => {
+      let updatedAscension = 0;
+      let index = 0;
+      let ascensionList = [];
+      for (let itemLevelStr in charLevelBreakpointData) {
+        let itemLevel = Number(itemLevelStr);
+        if (index === charLevelBreakpointData.length - 1) {
+          break;
+        }
+        if (
+          level === charLevelBreakpointData[index + 1] &&
+          index < ascensionBreakpointData.length - 1
+        ) {
+          ascensionList.push(ascensionBreakpointData[index + 1]);
+        }
+        if (
+          level >= itemLevel + 1 &&
+          level <= charLevelBreakpointData[index + 1]
+        ) {
+          updatedAscension = ascensionBreakpointData[index];
+          ascensionList.unshift(ascensionBreakpointData[index]);
+          break;
+        }
+        index++;
+      }
+      const updatedCharacterConfigs = characterConfigs.map((item) => {
+        if (item.name === "Ascension") {
+          return { ...item, value: updatedAscension };
+        }
+        if (item.name === "Level") {
+          return { ...item, value: level };
+        }
+        return item;
+      });
+      setCharacterConfigs(updatedCharacterConfigs);
+      setAscensionAvailableValues(ascensionList);
+    };
+
+    const handleAscensionChange = (ascension: number) => {
+      const updatedCharacterConfigs = characterConfigs.map((item) => {
+        if (item.name === "Ascension") {
+          return { ...item, value: ascension };
+        }
+        return item;
+      });
+      setCharacterConfigs(updatedCharacterConfigs);
+    };
+
+    const setSelectedChar = (character: Character) => {
+      const newTeam = { ...team };
+      newTeam.characters[charIndex - 1] = character;
+      database.getTeamDAO().updateTeamByName(team.name, team);
+      setCharacter(character);
+    };
+
     return (
-      <CharacterConfigCard title="Character">
+      <CharacterConfigCard
+        title={"Character" + (character ? ": " + character?.name : "")}
+      >
         <Grid item xs={12} sm={3} md={3} lg={3}>
           <Grid item>
             <Card>
@@ -72,7 +134,8 @@ const CharacterCard = React.memo(
                 image={
                   character
                     ? character.thumbnail
-                    : process.env.PUBLIC_URL + "/images/characters/add_new_4.png"
+                    : process.env.PUBLIC_URL +
+                      "/images/characters/add_new_4.png"
                 }
                 alt="character"
               />
@@ -92,7 +155,7 @@ const CharacterCard = React.memo(
                 <CharacterPopup
                   onClose={() => setOpenChar(false)}
                   onSelectImage={(pickedChar: Character) =>
-                    setCharacter(pickedChar)
+                    setSelectedChar(pickedChar)
                   }
                   oldChar={character}
                 />
@@ -121,6 +184,7 @@ const CharacterCard = React.memo(
                       variant="filled"
                       fullWidth
                       type="number"
+                      select
                       value={item.value}
                       inputProps={{
                         min: item.min,
@@ -128,17 +192,26 @@ const CharacterCard = React.memo(
                         step: 1,
                       }}
                       InputProps={{
-                        readOnly: true,
+                        readOnly:
+                          ascensionAvailableValues.length > 1 ? false : true,
                         tabIndex: -1,
-                        style: { backgroundColor: "white" },
                       }}
-                    />
+                      onChange={(event) =>
+                        handleAscensionChange(Number(event.target.value))
+                      }
+                    >
+                      {ascensionAvailableValues.map((option, index) => (
+                        <MenuItem key={index} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </CustomTextField>
                   ) : item.name === "Level" ? (
                     <CustomTextField
                       variant="filled"
                       fullWidth
                       type="number"
-                      defaultValue={item.value}
+                      value={item.value}
                       inputProps={{
                         min: item.min,
                         max: item.max,

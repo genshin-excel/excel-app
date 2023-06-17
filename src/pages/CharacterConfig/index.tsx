@@ -43,7 +43,7 @@ export const RowName = styled(Typography)(({ theme }) => ({
   textAlign: "right",
 }));
 
-function CharacterConfig({ char, team }: { char: Character | null, team: Team }) {
+function CharacterConfig({ char, team, charIndex }: { char: Character | null, team: Team, charIndex: number }) {
   console.log("CharacterConfig");
   document.title = "CharacterConfig";
 
@@ -82,7 +82,7 @@ function CharacterConfig({ char, team }: { char: Character | null, team: Team })
 
         {/*---------------------Character------------------------------ */}
         <Grid container item xs={12} sm={12} md={12} lg={6}>
-          <CharacterCard character={character} setCharacter={setCharacter} />
+          <CharacterCard character={character} setCharacter={setCharacter} charIndex={charIndex} team={team} />
         </Grid>
 
         {/*---------------------Weapon------------------------------ */}
@@ -142,7 +142,7 @@ export default function CharacterConfigFilter() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <CharacterConfig team={team} char={team.characters[Number(charIndex) - 1]} />
+      <CharacterConfig team={team} char={team.characters[Number(charIndex) - 1]} charIndex={Number(charIndex)}/>
     </Suspense>
   );
 }
