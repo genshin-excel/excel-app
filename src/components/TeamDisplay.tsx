@@ -2,7 +2,7 @@ import React, { lazy, Suspense, useContext, useState } from 'react';
 import { Team } from '../models/Team';
 import { Character } from '../models/Character';
 import { PickCharacterProps } from './CharacterPopUp';
-import { Grid, Card, CardMedia, Typography, IconButton } from '@mui/material';
+import { Grid, CardMedia, Typography, IconButton } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import EditTextField from './EditTextField';
 import { Alert, ErrorName } from './Alert';
@@ -46,7 +46,7 @@ function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: (
                 setError('This name already exists');
                 setShowErrorModal(true);
             }
-        } else if (newName.trim() === ''){
+        } else if (newName.trim() === '') {
             setError('Team name cannot be empty');
             setShowErrorModal(true);
         }
@@ -68,13 +68,13 @@ function TeamDisplay({ team, onDelete, onTeamChange }: { team: Team, onDelete: (
                 <Grid item container key={team.name} xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginTop: '20px', marginBottom: '10px' }}>
                     {isEditingName ? (
                         <>
-                            <EditTextField value={team.name} onBlur={handleNameEditBlur} onCancel={handleCancelNameEdit}/>            
+                            <EditTextField value={team.name} onBlur={handleNameEditBlur} onCancel={handleCancelNameEdit} />
                         </>
                     ) : (
                         <>
                             <Typography variant="h4" component="h2">
                                 {team.name}
-                            </Typography>                           
+                            </Typography>
                             <IconButton aria-label="edit" onClick={() => handleNameEditClick()}>
                                 <Edit />
                             </IconButton>

@@ -73,24 +73,45 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
             />
           </Grid>
           {selectedTab === 0 && (
-            <Grid
-              item
-              xs={12}
-              sx={{
-                position: "sticky",
-                top: 105,
-                zIndex: "10",
-                background: "#fff",
-              }}
-            >
-              <Suspense fallback={null}>
-                <TeamDisplay
-                  team={team}
-                  onDelete={() => navigate("/")}
-                  onTeamChange={handleTeamChange}
-                />
-              </Suspense>
-            </Grid>
+            <>
+              <Grid
+                item
+                container
+                xs={12}
+                columnSpacing={2}
+                rowSpacing={1}
+                sx={{
+                  position: "sticky",
+                  top: 105,
+                  zIndex: "10",
+                  background: "#fff",
+                }}
+              >
+                <Grid item xs={12}>
+                  <Suspense fallback={null}>
+                    <TeamDisplay
+                      team={team}
+                      onDelete={() => navigate("/")}
+                      onTeamChange={handleTeamChange}
+                    />
+                  </Suspense>
+                </Grid>
+                {[0, 1, 2, 3].map((value) => (
+                  <Grid item xs={3} key={value}>
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      startIcon={<BuildIcon />}
+                      component={Link}
+                      to={`${value + 1}`}
+                    >
+                      Config
+                    </Button>
+                  </Grid>
+                ))}
+              </Grid>
+
+            </>
           )}
 
           <Grid item container xs={12} display="flex" justifyContent="flex-end">
@@ -124,15 +145,31 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
                 background: "#fff",
               }}
             >
-              <Grid item md={6}>
-                <Suspense fallback={null}>
-                  <TeamDisplay
-                    team={team}
-                    onDelete={() => navigate("/")}
-                    onTeamChange={handleTeamChange}
-                  />
-                </Suspense>
+              <Grid item container md={6} columnSpacing={2} rowSpacing={1}>
+                <Grid item md={12}>
+                  <Suspense fallback={null}>
+                    <TeamDisplay
+                      team={team}
+                      onDelete={() => navigate("/")}
+                      onTeamChange={handleTeamChange}
+                    />
+                  </Suspense>
+                </Grid>
+                {[0, 1, 2, 3].map((value) => (
+                  <Grid item md={3} key={value}>
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      startIcon={<BuildIcon />}
+                      component={Link}
+                      to={`${value + 1}`}
+                    >
+                      Config
+                    </Button>
+                  </Grid>
+                ))}
               </Grid>
+
               <Grid
                 item
                 md={6}
@@ -153,19 +190,7 @@ function TeamDetails({ teamValue }: { teamValue: Team }) {
                 mt={1}
               >
                 {/* <Grid item md={3}> */}
-                {[0, 1, 2, 3].map((value) => (
-                  <Grid item md={3} key={value}>
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      startIcon={<BuildIcon/>}
-                      component={Link}
-                      to={`${value+1}`}
-                    >
-                      Config
-                    </Button>
-                  </Grid>
-                ))}
+
               </Grid>
               <Grid
                 item
