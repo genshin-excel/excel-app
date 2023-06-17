@@ -16,7 +16,7 @@ const CharacterCard = React.memo(
   }) => {
     console.log("CharacterCard");
     const [openChar, setOpenChar] = useState(false);
-    let characterConfigs = [
+    const [characterConfigs, setCharacterConfigs] = useState([
       ["Ascension", 0, 0, 6],
       ["Level", 1, 1, 90],
       ["Constellation", 0, 0, 6],
@@ -25,7 +25,33 @@ const CharacterCard = React.memo(
       value: Number(item[1]),
       min: Number(item[2]),
       max: Number(item[3]),
-    }));
+    })));
+
+    const handleLevelChange = (newValue: number) => {
+      let updatedAscension = characterConfigs.find((item) => item.name === "Ascension")!.value;
+      if (newValue < 20) {
+        updatedAscension = 0;
+      } else if (newValue >= 20 && newValue < 40) {
+        updatedAscension = 1;
+      } else if (newValue >= 40 && newValue < 50) {
+        updatedAscension = 2;
+      } else if (newValue >= 50 && newValue < 60) {
+        updatedAscension = 3;
+      } else if (newValue >= 60 && newValue < 70) {
+        updatedAscension = 4;
+      } else if (newValue >= 70 && newValue < 80) {
+        updatedAscension = 5;
+      } else if (newValue >= 80 && newValue <= 90) {
+        updatedAscension = 6;
+      }
+
+      const updatedCharacterConfigs = characterConfigs.map((item) =>
+        item.name === "Ascension" ? { ...item, value: updatedAscension } : item
+      );
+
+      setCharacterConfigs(updatedCharacterConfigs);
+    };
+
 
     let characterBaseStats = [
       ["Base HP", 14352],
@@ -43,7 +69,11 @@ const CharacterCard = React.memo(
             <Card>
               <CardMedia
                 component="img"
-                image={character? character.thumbnail : process.env.PUBLIC_URL + "/images/characters/add_new_4.png"}
+                image={
+                  character
+                    ? character.thumbnail
+                    : process.env.PUBLIC_URL + "/images/characters/add_new_4.png"
+                }
                 alt="character"
               />
             </Card>
@@ -86,20 +116,51 @@ const CharacterCard = React.memo(
                   <RowName>{item.name}</RowName>
                 </Grid>
                 <Grid item xs={6}>
-                  <CustomTextField
-                    variant="filled"
-                    fullWidth
-                    type="number"
-                    defaultValue={item.value}
-                    // onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                    //   console.log('test')
-                    // }
-                    inputProps={{
-                      min: item.min,
-                      max: item.max,
-                      step: 1,
-                    }}
-                  />
+                  {item.name === "Ascension" ? (
+                    <CustomTextField
+                      variant="filled"
+                      fullWidth
+                      type="number"
+                      value={item.value}
+                      inputProps={{
+                        min: item.min,
+                        max: item.max,
+                        step: 1,
+                      }}
+                      InputProps={{
+                        readOnly: true,
+                        tabIndex: -1,
+                        style: { backgroundColor: "white" },
+                      }}
+                    />
+                  ) : item.name === "Level" ? (
+                    <CustomTextField
+                      variant="filled"
+                      fullWidth
+                      type="number"
+                      defaultValue={item.value}
+                      inputProps={{
+                        min: item.min,
+                        max: item.max,
+                        step: 1,
+                      }}
+                      onChange={(event) =>
+                        handleLevelChange(Number(event.target.value))
+                      }
+                    />
+                  ) : (
+                    <CustomTextField
+                      variant="filled"
+                      fullWidth
+                      type="number"
+                      defaultValue={item.value}
+                      inputProps={{
+                        min: item.min,
+                        max: item.max,
+                        step: 1,
+                      }}
+                    />
+                  )}
                 </Grid>
               </Grid>
             ))}

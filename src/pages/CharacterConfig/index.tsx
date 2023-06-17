@@ -1,5 +1,5 @@
-import React, { useState,useContext,Suspense } from "react";
-import {Grid,Typography,TextField,Button,styled} from "@mui/material";
+import React, { useState, useContext, Suspense } from "react";
+import { Grid, Typography, TextField, Button, styled } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Character } from "../../models/Character";
 import { Weapon } from "../../models/Weapon";
@@ -43,7 +43,7 @@ export const RowName = styled(Typography)(({ theme }) => ({
   textAlign: "right",
 }));
 
-function CharacterConfig({char, team}:{char: Character | null, team: Team}) {
+function CharacterConfig({ char, team }: { char: Character | null, team: Team }) {
   console.log("CharacterConfig");
   document.title = "CharacterConfig";
 
@@ -52,7 +52,7 @@ function CharacterConfig({char, team}:{char: Character | null, team: Team}) {
   };
 
   const [character, setCharacter] = useState<Character | null>(char);
-  
+
   const [weapon, setWeapon] = useState<Weapon>({
     id: "",
     name: "",
@@ -71,53 +71,53 @@ function CharacterConfig({char, team}:{char: Character | null, team: Team}) {
     <>
       <Grid container columnSpacing={1} rowSpacing={2} maxWidth="xl">
         <Grid container item xs={12}>
-          <Button 
-            startIcon={<ArrowBackIcon />} 
+          <Button
+            startIcon={<ArrowBackIcon />}
             onClick={handleBackClick}>
-              <Typography sx={{fontWeight: 'bold'}}>
-                Back to Team 
-              </Typography>
+            <Typography sx={{ fontWeight: 'bold' }}>
+              Back to Team
+            </Typography>
           </Button>
         </Grid>
 
         {/*---------------------Character------------------------------ */}
         <Grid container item xs={12} sm={12} md={12} lg={6}>
-          <CharacterCard character={character} setCharacter={setCharacter}/>
+          <CharacterCard character={character} setCharacter={setCharacter} />
         </Grid>
 
         {/*---------------------Weapon------------------------------ */}
         <Grid container item xs={12} sm={12} md={12} lg={6}>
-          <WeaponCard weapon={weapon} setWeapon={setWeapon}/>
+          <WeaponCard weapon={weapon} setWeapon={setWeapon} />
         </Grid>
 
         {/*---------------------Artifact Set------------------------------ */}
         <Grid container item xs={12} sm={12} md={12} lg={5}>
-          <ArtifactCard artifactSets={artifactSets} setArtifactSets={setArtifactSets}/>
+          <ArtifactCard artifactSets={artifactSets} setArtifactSets={setArtifactSets} />
         </Grid>
 
         {/*---------------------Artifact Main Stats------------------------------ */}
         <Grid container item xs={12} sm={6} md={6} lg={4}>
-          <ArtifactMainStatsCard/>
+          <ArtifactMainStatsCard />
         </Grid>
 
         {/*---------------------Talents------------------------------ */}
         <Grid container item xs={12} sm={6} md={6} lg={3}>
-          <TalentsCard/>
+          <TalentsCard />
         </Grid>
 
         {/*---------------------Substats------------------------------ */}
         <Grid container item xs={12} sm={6} md={6} lg={3}>
-          <SubstatsCard/>
+          <SubstatsCard />
         </Grid>
 
         {/*---------------------Final Character Stats------------------------------ */}
         <Grid container item xs={12} sm={6} md={6} lg={3}>
-          <FinalCharacterStatsCard/>
+          <FinalCharacterStatsCard />
         </Grid>
 
         {/*---------------------Stats Bonus------------------------------ */}
         <Grid container item xs={12} md={12} lg={6}>
-          <StatsBonusCard stastBonus={stastBonus} setStatsBonus={setStatsBonus}/>
+          <StatsBonusCard stastBonus={stastBonus} setStatsBonus={setStatsBonus} />
         </Grid>
       </Grid>
     </>
@@ -136,13 +136,13 @@ export default function CharacterConfigFilter() {
   if (!team) {
     return <Navigate to="../" />;
   }
-  if(!charIndex || ["1", "2", "3", "4"].indexOf(charIndex) < 0 ) {
+  if (!charIndex || ["1", "2", "3", "4"].indexOf(charIndex) < 0) {
     return <Navigate to="../" />;
   }
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <CharacterConfig team={team} char={team.characters[Number(charIndex)-1]}/>
+      <CharacterConfig team={team} char={team.characters[Number(charIndex) - 1]} />
     </Suspense>
   );
 }
