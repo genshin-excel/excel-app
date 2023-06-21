@@ -67,6 +67,8 @@ function CharacterConfig({ char, team, charIndex }: { char: Character | null, te
     { title: string; name: string[]; values: string }[]
   >([]);
 
+const [title, setTitle]=useState("");
+
   return (
     <>
       <Grid container columnSpacing={1} rowSpacing={2} maxWidth="xl">
@@ -97,7 +99,7 @@ function CharacterConfig({ char, team, charIndex }: { char: Character | null, te
 
         {/*---------------------Artifact Main Stats------------------------------ */}
         <Grid container item xs={12} sm={6} md={6} lg={4}>
-          <ArtifactMainStatsCard />
+          <ArtifactMainStatsCard nameArtifact={title} setNameArtifact={setTitle}/>
         </Grid>
 
         {/*---------------------Talents------------------------------ */}
@@ -117,7 +119,7 @@ function CharacterConfig({ char, team, charIndex }: { char: Character | null, te
 
         {/*---------------------Stats Bonus------------------------------ */}
         <Grid container item xs={12} md={12} lg={6}>
-          <StatsBonusCard stastBonus={stastBonus} setStatsBonus={setStatsBonus} />
+          <StatsBonusCard stastBonus={stastBonus} setStatsBonus={setStatsBonus} name={title}/>
         </Grid>
       </Grid>
     </>

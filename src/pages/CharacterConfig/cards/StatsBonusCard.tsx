@@ -1,5 +1,5 @@
 import CharacterConfigCard from "../../../components/CharacterConfigCard";
-import React from "react";
+import React ,{useState} from "react";
 import { Grid, MenuItem, Button } from "@mui/material";
 import { CustomTextField } from "..";
 import { StyledDeleteIcon } from "..";
@@ -8,15 +8,19 @@ const StatsBonusCard = React.memo(
   ({
     stastBonus,
     setStatsBonus,
+    name,
   }: {
     stastBonus: { title: string; name: string[]; values: string }[];
     setStatsBonus: React.Dispatch<
       React.SetStateAction<{ title: string; name: string[]; values: string }[]>
     >;
+    name: string;
   }) => {
     console.log("StatsBonusCard");
+// const [nameArtifact, setNameArtifact]= useState();
+
     let initialStats = {
-      title: "Blizzard Strayer",
+      title: name,
       name: [
         "ATK%",
         "ATK",
@@ -67,6 +71,7 @@ const StatsBonusCard = React.memo(
                   label="Name"
                   fullWidth
                   defaultValue={`${stats.title} ${index}`}
+                  
                 />
               </Grid>
               <Grid item xs={3}>

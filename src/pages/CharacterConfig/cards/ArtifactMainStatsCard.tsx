@@ -1,12 +1,16 @@
 import CharacterConfigCard from "../../../components/CharacterConfigCard";
-import React from "react";
+import React ,{useState} from "react";
 import { Grid, MenuItem } from "@mui/material";
 import { RowName } from "..";
 import { CustomTextField } from "..";
 
-const ArtifactMainStatsCard = React.memo(() => {
+const ArtifactMainStatsCard = React.memo(({nameArtifact, setNameArtifact}:{nameArtifact: string, setNameArtifact: React.Dispatch<string>}) => {
   console.log("ArtifactMainStatsCard");
-  let artifactMainStats = [
+
+// const [nameArtifact, setNameArtifact]= useState("");
+
+
+  const [artifactMainStats, setArtifactMainStats] = useState([
     { name: "Sands", values: ["HP%", "ATK%", "DEF%", "EM", "ER%"] },
     {
       name: "Goblet",
@@ -24,7 +28,7 @@ const ArtifactMainStatsCard = React.memo(() => {
         "HEALING",
       ],
     },
-  ];
+  ]);
 
   return (
     <CharacterConfigCard title="Artifact Main Stats">
@@ -49,6 +53,8 @@ const ArtifactMainStatsCard = React.memo(() => {
                 select
                 defaultValue={stats.values[0]}
                 sx={{ pl: 2 }}
+                value={nameArtifact}
+                onChange={(event) => setNameArtifact(event.target.value)}
               >
                 {stats.values.map((option) => (
                   <MenuItem key={option} value={option}>
