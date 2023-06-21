@@ -1,10 +1,17 @@
 import CharacterConfigCard from "../../../components/CharacterConfigCard";
 import React, { useState, Suspense } from "react";
-import { Grid, Card, CardMedia, Button } from "@mui/material";
+import { Grid, Card, CardMedia, Button, MenuItem } from "@mui/material";
 import { RowName } from "..";
 import { CustomTextField } from "..";
 import WeaponPopup from "../../../components/WeponPopUp";
 import { Weapon } from "../../../models/Weapon";
+
+type WeaponConfigs = {
+  name: string;
+  value: number;
+  min: number;
+  max: number;
+};
 
 const WeaponCard = React.memo(
   ({
@@ -17,16 +24,71 @@ const WeaponCard = React.memo(
     console.log("WeaponCard");
     const [openWeapon, setOpenWeapon] = useState(false);
 
-    let weaponConfigs = [
+    const [weaponConfigs, setWeaponConfigs] = useState<WeaponConfigs[]>([
       ["Refinement", 0, 1, 5],
       ["Ascension", 0, 0, 6],
       ["Level", 1, 1, 90],
+      ["ATK", 0],
     ].map((item) => ({
       name: String(item[0]),
       value: Number(item[1]),
       min: Number(item[2]),
       max: Number(item[3]),
-    }));
+    })));
+
+    const weaponLevelBreakpointData = [0, 20, 40, 50, 60, 70, 80, 90];
+    const ascensionBreakpointData = [0, 1, 2, 3, 4, 5, 6];
+    const [ascensionAvailableValues, setAscensionAvailableValues] = useState([
+      0,
+    ]);
+
+    const handleLevelChange = (level: number) => {
+      let updatedAscension = 0;
+      let index = 0;
+      let ascensionList = [];
+      for (let itemLevelStr in weaponLevelBreakpointData) {
+        let itemLevel = Number(itemLevelStr);
+        if (index === weaponLevelBreakpointData.length - 1) {
+          break;
+        }
+        if (
+          level === weaponLevelBreakpointData[index + 1] &&
+          index < ascensionBreakpointData.length - 1
+        ) {
+          ascensionList.push(ascensionBreakpointData[index + 1]);
+        }
+        if (
+          level >= itemLevel + 1 &&
+          level <= weaponLevelBreakpointData[index + 1]
+        ) {
+          updatedAscension = ascensionBreakpointData[index];
+          ascensionList.unshift(ascensionBreakpointData[index]);
+          break;
+        }
+        index++;
+      }
+      const updatedWeaponConfigs = weaponConfigs.map((item) => {
+        if (item.name === "Ascension") {
+          return { ...item, value: updatedAscension };
+        }
+        if (item.name === "Level") {
+          return { ...item, value: level };
+        }
+        return item;
+      });
+      setWeaponConfigs(updatedWeaponConfigs);
+      setAscensionAvailableValues(ascensionList);
+    };
+
+    const handleAscensionChange = (ascension: number) => {
+      const updatedCharacterConfigs = weaponConfigs.map((item) => {
+        if (item.name === "Ascension") {
+          return { ...item, value: ascension };
+        }
+        return item;
+      });
+      setWeaponConfigs(updatedCharacterConfigs);
+    };
 
     const handleCloseWeapon = () => {
       setOpenWeapon(false);
@@ -77,23 +139,52 @@ const WeaponCard = React.memo(
           justifyContent="flex-end"
           rowSpacing={1}
         >
-          {weaponConfigs.slice(0, -1).map((item, index) => (
+          {weaponConfigs.slice(0, -2).map((item, index) => (
             <Grid key={index} item display="flex" alignItems="flex-end" xs={12}>
               <Grid item xs={6} pl={1} pr={1}>
                 <RowName>{item.name}</RowName>
               </Grid>
               <Grid item xs={6}>
-                <CustomTextField
-                  fullWidth
-                  variant="filled"
-                  type="number"
-                  defaultValue={item.value}
-                  inputProps={{
-                    min: item.min,
-                    max: item.max,
-                    step: 1,
-                  }}
-                />
+                {item.name === "Ascension" ? (
+                  <CustomTextField
+                    variant="filled"
+                    fullWidth
+                    type="number"
+                    select
+                    value={item.value}
+                    inputProps={{
+                      min: item.min,
+                      max: item.max,
+                      step: 1,
+                    }}
+                    InputProps={{
+                      readOnly:
+                        ascensionAvailableValues.length > 1 ? false : true,
+                      tabIndex: -1,
+                    }}
+                    onChange={(event) =>
+                      handleAscensionChange(Number(event.target.value))
+                    }
+                  >
+                    {ascensionAvailableValues.map((option, index) => (
+                      <MenuItem key={index} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </CustomTextField>
+                ) : (
+                  <CustomTextField
+                    fullWidth
+                    variant="filled"
+                    type="number"
+                    defaultValue={item.value}
+                    inputProps={{
+                      min: item.min,
+                      max: item.max,
+                      step: 1,
+                    }}
+                  />
+                )}
               </Grid>
             </Grid>
           ))}
@@ -108,6 +199,9 @@ const WeaponCard = React.memo(
                 variant="filled"
                 type="number"
                 defaultValue={weaponConfigs[2].value}
+                onChange={(event) =>
+                  handleLevelChange(Number(event.target.value))
+                }
                 inputProps={{
                   min: weaponConfigs[2].min,
                   max: weaponConfigs[2].max,
@@ -118,9 +212,9 @@ const WeaponCard = React.memo(
             <Grid item xs={3.5}>
               <CustomTextField
                 variant="filled"
-                label={weaponConfigs[2].name}
+                label={weaponConfigs[3].name}
                 fullWidth
-                defaultValue={weaponConfigs[2].value}
+                defaultValue={weaponConfigs[3].value}
                 sx={{
                   pl: 1,
                   "& .MuiInputLabel-root": {
